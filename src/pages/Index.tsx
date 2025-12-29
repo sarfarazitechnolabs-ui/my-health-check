@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { ProgressRing } from "@/components/ProgressRing";
 import { MealCard } from "@/components/MealCard";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { SectionHeader } from "@/components/SectionHeader";
-import { Utensils, Dumbbell, Sparkles, CalendarDays } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus } from "lucide-react";
 
 interface Meal {
   id: string;
@@ -159,11 +161,19 @@ const Index = () => {
                 Your Daily Plan
               </h1>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary">
-              <Sparkles className="w-4 h-4 text-accent" />
-              <span className="text-sm font-medium text-secondary-foreground">
-                Day 12
-              </span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary">
+                <Sparkles className="w-4 h-4 text-accent" />
+                <span className="text-sm font-medium text-secondary-foreground">
+                  Day 12
+                </span>
+              </div>
+              <Link to="/create">
+                <Button size="sm" className="rounded-full">
+                  <Plus className="w-4 h-4 mr-1" />
+                  Create
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
