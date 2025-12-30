@@ -7,6 +7,9 @@ interface Meal {
   name: string;
   description: string;
   calories: number;
+  protein: number;
+  carbs: number;
+  fats: number;
   time: string;
   completed: boolean;
 }
@@ -47,7 +50,7 @@ export const MealCard = ({ meal, onToggle }: MealCardProps) => {
           {meal.description}
         </p>
         
-        <div className="flex items-center gap-4 mt-2">
+        <div className="flex flex-wrap items-center gap-3 mt-2">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Clock className="w-3.5 h-3.5" />
             <span>{meal.time}</span>
@@ -55,6 +58,11 @@ export const MealCard = ({ meal, onToggle }: MealCardProps) => {
           <div className="flex items-center gap-1.5 text-xs text-accent font-medium">
             <Flame className="w-3.5 h-3.5" />
             <span>{meal.calories} kcal</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">P: {meal.protein}g</span>
+            <span className="px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium">C: {meal.carbs}g</span>
+            <span className="px-1.5 py-0.5 rounded bg-destructive/10 text-destructive font-medium">F: {meal.fats}g</span>
           </div>
         </div>
       </div>
