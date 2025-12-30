@@ -15,24 +15,26 @@ interface ExerciseCardProps {
   exercise: Exercise;
   onToggle: (id: string) => void;
   index: number;
+  onClick?: () => void;
 }
 
-export const ExerciseCard = ({ exercise, onToggle, index }: ExerciseCardProps) => {
+export const ExerciseCard = ({ exercise, onToggle, index, onClick }: ExerciseCardProps) => {
   return (
     <div
       className={cn(
-        "group relative flex items-center gap-4 p-4 rounded-xl transition-all duration-300",
+        "group relative flex items-center gap-4 p-4 rounded-xl transition-all duration-300 cursor-pointer",
         "bg-card shadow-card hover:shadow-soft",
         "border border-transparent",
         exercise.completed && "bg-success-light border-primary/20"
       )}
       style={{ animationDelay: `${index * 50}ms` }}
+      onClick={onClick}
     >
       <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-secondary text-secondary-foreground font-display font-bold text-sm">
         {index + 1}
       </div>
       
-      <div className="pt-0.5">
+      <div className="pt-0.5" onClick={(e) => e.stopPropagation()}>
         <Checkbox
           checked={exercise.completed}
           onCheckedChange={() => onToggle(exercise.id)}
