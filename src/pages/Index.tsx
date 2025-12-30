@@ -12,6 +12,9 @@ interface Meal {
   name: string;
   description: string;
   calories: number;
+  protein: number;
+  carbs: number;
+  fats: number;
   time: string;
   completed: boolean;
 }
@@ -31,6 +34,9 @@ const initialMeals: Meal[] = [
     name: "Breakfast",
     description: "Overnight oats with berries and almonds",
     calories: 380,
+    protein: 15,
+    carbs: 52,
+    fats: 12,
     time: "7:00 AM",
     completed: false,
   },
@@ -39,6 +45,9 @@ const initialMeals: Meal[] = [
     name: "Mid-Morning Snack",
     description: "Greek yogurt with honey",
     calories: 150,
+    protein: 12,
+    carbs: 18,
+    fats: 4,
     time: "10:00 AM",
     completed: false,
   },
@@ -47,6 +56,9 @@ const initialMeals: Meal[] = [
     name: "Lunch",
     description: "Grilled chicken salad with quinoa",
     calories: 520,
+    protein: 42,
+    carbs: 45,
+    fats: 18,
     time: "1:00 PM",
     completed: false,
   },
@@ -55,6 +67,9 @@ const initialMeals: Meal[] = [
     name: "Afternoon Snack",
     description: "Apple slices with almond butter",
     calories: 180,
+    protein: 5,
+    carbs: 22,
+    fats: 10,
     time: "4:00 PM",
     completed: false,
   },
@@ -63,6 +78,9 @@ const initialMeals: Meal[] = [
     name: "Dinner",
     description: "Salmon with roasted vegetables",
     calories: 580,
+    protein: 45,
+    carbs: 28,
+    fats: 32,
     time: "7:00 PM",
     completed: false,
   },
@@ -136,9 +154,14 @@ const Index = () => {
 
   const completedMeals = meals.filter((m) => m.completed).length;
   const completedExercises = exercises.filter((e) => e.completed).length;
-  const totalItems = meals.length + exercises.length;
-  const completedItems = completedMeals + completedExercises;
-  const overallProgress = (completedItems / totalItems) * 100;
+  
+  // Calculate calorie progress
+  const totalCalories = meals.reduce((sum, m) => sum + m.calories, 0);
+  const consumedCalories = meals.filter((m) => m.completed).reduce((sum, m) => sum + m.calories, 0);
+  const calorieProgress = (consumedCalories / totalCalories) * 100;
+  
+  // Calculate exercise progress
+  const exerciseProgress = (completedExercises / exercises.length) * 100;
 
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -182,21 +205,23 @@ const Index = () => {
       <main className="container max-w-2xl py-6 space-y-8">
         {/* Progress Overview */}
         <section className="slide-up">
-          <div className="flex flex-col items-center justify-center p-8 rounded-2xl bg-card shadow-soft">
-            <ProgressRing progress={overallProgress} size={140} strokeWidth={12} />
-            <p className="mt-4 text-muted-foreground text-center">
-              {completedItems === totalItems ? (
-                <span className="text-primary font-semibold flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  Amazing! You crushed it today!
-                </span>
-              ) : (
-                <>
-                  <span className="font-semibold text-foreground">{completedItems}</span> of{" "}
-                  <span className="font-semibold text-foreground">{totalItems}</span> tasks completed
-                </>
-              )}
-            </p>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Meals Progress */}
+            <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-card shadow-soft">
+              <ProgressRing progress={calorieProgress} size={100} strokeWidth={10} />
+              <p className="mt-3 text-sm font-medium text-foreground">Calories</p>
+              <p className="text-xs text-muted-foreground">
+                {consumedCalories} / {totalCalories} kcal
+              </p>
+            </div>
+            {/* Exercise Progress */}
+            <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-card shadow-soft">
+              <ProgressRing progress={exerciseProgress} size={100} strokeWidth={10} />
+              <p className="mt-3 text-sm font-medium text-foreground">Workout</p>
+              <p className="text-xs text-muted-foreground">
+                {completedExercises} / {exercises.length} done
+              </p>
+            </div>
           </div>
         </section>
 
