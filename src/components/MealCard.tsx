@@ -17,19 +17,21 @@ interface Meal {
 interface MealCardProps {
   meal: Meal;
   onToggle: (id: string) => void;
+  onClick?: () => void;
 }
 
-export const MealCard = ({ meal, onToggle }: MealCardProps) => {
+export const MealCard = ({ meal, onToggle, onClick }: MealCardProps) => {
   return (
     <div
       className={cn(
-        "group relative flex items-start gap-4 p-4 rounded-xl transition-all duration-300",
+        "group relative flex items-start gap-4 p-4 rounded-xl transition-all duration-300 cursor-pointer",
         "bg-card shadow-card hover:shadow-soft",
         "border border-transparent",
         meal.completed && "bg-success-light border-primary/20"
       )}
+      onClick={onClick}
     >
-      <div className="pt-0.5">
+      <div className="pt-0.5" onClick={(e) => e.stopPropagation()}>
         <Checkbox
           checked={meal.completed}
           onCheckedChange={() => onToggle(meal.id)}

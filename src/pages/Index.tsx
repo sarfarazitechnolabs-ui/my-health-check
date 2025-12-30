@@ -4,6 +4,10 @@ import { ProgressRing } from "@/components/ProgressRing";
 import { MealCard } from "@/components/MealCard";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { SectionHeader } from "@/components/SectionHeader";
+import { SearchBar } from "@/components/SearchBar";
+import { Pagination } from "@/components/Pagination";
+import { MealDetailModal } from "@/components/MealDetailModal";
+import { ExerciseDetailModal } from "@/components/ExerciseDetailModal";
 import { Button } from "@/components/ui/button";
 import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus } from "lucide-react";
 
@@ -135,6 +139,16 @@ const initialExercises: Exercise[] = [
 const Index = () => {
   const [meals, setMeals] = useState<Meal[]>(initialMeals);
   const [exercises, setExercises] = useState<Exercise[]>(initialExercises);
+  const [mealSearch, setMealSearch] = useState("");
+  const [exerciseSearch, setExerciseSearch] = useState("");
+  const [mealPage, setMealPage] = useState(1);
+  const [exercisePage, setExercisePage] = useState(1);
+  
+  // Modal states
+  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+  const [mealModalOpen, setMealModalOpen] = useState(false);
+  const [exerciseModalOpen, setExerciseModalOpen] = useState(false);
 
   const toggleMeal = (id: string) => {
     setMeals((prev) =>
@@ -150,6 +164,16 @@ const Index = () => {
         ex.id === id ? { ...ex, completed: !ex.completed } : ex
       )
     );
+  };
+
+  const openMealModal = (meal: Meal) => {
+    setSelectedMeal(meal);
+    setMealModalOpen(true);
+  };
+
+  const openExerciseModal = (exercise: Exercise) => {
+    setSelectedExercise(exercise);
+    setExerciseModalOpen(true);
   };
 
   const completedMeals = meals.filter((m) => m.completed).length;
@@ -234,11 +258,28 @@ const Index = () => {
             completedCount={completedMeals}
             totalCount={meals.length}
           />
+          <div className="mb-4">
+            <SearchBar 
+              placeholder="Search meals..." 
+              value={mealSearch}
+              onChange={setMealSearch}
+            />
+          </div>
           <div className="space-y-3">
             {meals.map((meal) => (
-              <MealCard key={meal.id} meal={meal} onToggle={toggleMeal} />
+              <MealCard 
+                key={meal.id} 
+                meal={meal} 
+                onToggle={toggleMeal}
+                onClick={() => openMealModal(meal)}
+              />
             ))}
           </div>
+          <Pagination 
+            currentPage={mealPage} 
+            totalPages={3} 
+            onPageChange={setMealPage}
+          />
         </section>
 
         {/* Workout Section */}
@@ -250,6 +291,13 @@ const Index = () => {
             completedCount={completedExercises}
             totalCount={exercises.length}
           />
+          <div className="mb-4">
+            <SearchBar 
+              placeholder="Search exercises..." 
+              value={exerciseSearch}
+              onChange={setExerciseSearch}
+            />
+          </div>
           <div className="space-y-3">
             {exercises.map((exercise, index) => (
               <ExerciseCard
@@ -257,14 +305,32 @@ const Index = () => {
                 exercise={exercise}
                 onToggle={toggleExercise}
                 index={index}
+                onClick={() => openExerciseModal(exercise)}
               />
             ))}
           </div>
+          <Pagination 
+            currentPage={exercisePage} 
+            totalPages={2} 
+            onPageChange={setExercisePage}
+          />
         </section>
       </main>
 
       {/* Bottom spacing for mobile */}
       <div className="h-8" />
+
+      {/* Modals */}
+      <MealDetailModal 
+        meal={selectedMeal} 
+        open={mealModalOpen} 
+        onOpenChange={setMealModalOpen}
+      />
+      <ExerciseDetailModal 
+        exercise={selectedExercise} 
+        open={exerciseModalOpen} 
+        onOpenChange={setExerciseModalOpen}
+      />
     </div>
   );
 };
