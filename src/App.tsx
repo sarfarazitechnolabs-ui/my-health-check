@@ -7,7 +7,9 @@ import Index from "./pages/Index";
 import PlanCreator from "./pages/PlanCreator";
 import DietPlans from "./pages/DietPlans";
 import WorkoutPlans from "./pages/WorkoutPlans";
+import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
+import ChatPopup from "./components/ChatPopup";
 
 const queryClient = new QueryClient();
 
@@ -22,9 +24,11 @@ const App = () => (
           <Route path="/create" element={<PlanCreator />} />
           <Route path="/create/diet" element={<DietPlans />} />
           <Route path="/create/workout" element={<WorkoutPlans />} />
+          <Route path="/chat" element={<Chat />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <ChatPopup />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
