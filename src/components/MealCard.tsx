@@ -18,9 +18,10 @@ interface MealCardProps {
   meal: Meal;
   onToggle: (id: string) => void;
   onClick?: () => void;
+  actionButton?: React.ReactNode;
 }
 
-export const MealCard = ({ meal, onToggle, onClick }: MealCardProps) => {
+export const MealCard = ({ meal, onToggle, onClick, actionButton }: MealCardProps) => {
   return (
     <div
       className={cn(
@@ -68,6 +69,12 @@ export const MealCard = ({ meal, onToggle, onClick }: MealCardProps) => {
           </div>
         </div>
       </div>
+      
+      {actionButton && (
+        <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
+          {actionButton}
+        </div>
+      )}
     </div>
   );
 };

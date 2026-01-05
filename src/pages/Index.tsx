@@ -8,8 +8,10 @@ import { SearchBar } from "@/components/SearchBar";
 import { Pagination } from "@/components/Pagination";
 import { MealDetailModal } from "@/components/MealDetailModal";
 import { ExerciseDetailModal } from "@/components/ExerciseDetailModal";
+import { CustomEntryModal } from "@/components/CustomEntryModal";
+import { StreakCalendar } from "@/components/StreakCalendar";
 import { Button } from "@/components/ui/button";
-import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus } from "lucide-react";
+import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus, RefreshCw } from "lucide-react";
 
 interface Meal {
   id: string;
@@ -149,6 +151,15 @@ const Index = () => {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [mealModalOpen, setMealModalOpen] = useState(false);
   const [exerciseModalOpen, setExerciseModalOpen] = useState(false);
+  
+  // Custom entry modal states
+  const [customEntryType, setCustomEntryType] = useState<"meal" | "exercise">("meal");
+  const [customEntryItem, setCustomEntryItem] = useState<{ id: string; name: string } | null>(null);
+  const [customEntryOpen, setCustomEntryOpen] = useState(false);
+  
+  // Track substituted items
+  const [substitutedMeals, setSubstitutedMeals] = useState<Record<string, { name: string; calories: number }>>({});
+  const [substitutedExercises, setSubstitutedExercises] = useState<Record<string, { name: string }>>({});
 
   const toggleMeal = (id: string) => {
     setMeals((prev) =>
@@ -174,6 +185,44 @@ const Index = () => {
   const openExerciseModal = (exercise: Exercise) => {
     setSelectedExercise(exercise);
     setExerciseModalOpen(true);
+  };
+
+  const openCustomMealEntry = (meal: Meal, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCustomEntryType("meal");
+    setCustomEntryItem({ id: meal.id, name: meal.name });
+    setCustomEntryOpen(true);
+  };
+
+  const openCustomExerciseEntry = (exercise: Exercise, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCustomEntryType("exercise");
+    setCustomEntryItem({ id: exercise.id, name: exercise.name });
+    setCustomEntryOpen(true);
+  };
+
+  const handleCustomEntry = (entry: any) => {
+    if (!customEntryItem) return;
+    
+    if (customEntryType === "meal") {
+      setSubstitutedMeals(prev => ({
+        ...prev,
+        [customEntryItem.id]: { name: entry.name, calories: entry.calories }
+      }));
+      // Mark as completed
+      setMeals(prev =>
+        prev.map(m => m.id === customEntryItem.id ? { ...m, completed: true } : m)
+      );
+    } else {
+      setSubstitutedExercises(prev => ({
+        ...prev,
+        [customEntryItem.id]: { name: entry.name }
+      }));
+      // Mark as completed
+      setExercises(prev =>
+        prev.map(ex => ex.id === customEntryItem.id ? { ...ex, completed: true } : ex)
+      );
+    }
   };
 
   const completedMeals = meals.filter((m) => m.completed).length;
@@ -267,12 +316,29 @@ const Index = () => {
           </div>
           <div className="space-y-3">
             {meals.map((meal) => (
-              <MealCard 
-                key={meal.id} 
-                meal={meal} 
-                onToggle={toggleMeal}
-                onClick={() => openMealModal(meal)}
-              />
+              <div key={meal.id} className="relative">
+                {substitutedMeals[meal.id] && (
+                  <div className="absolute -top-2 left-3 z-10 px-2 py-0.5 text-xs font-medium bg-accent text-accent-foreground rounded-full">
+                    Substituted: {substitutedMeals[meal.id].name}
+                  </div>
+                )}
+                <MealCard 
+                  meal={meal} 
+                  onToggle={toggleMeal}
+                  onClick={() => openMealModal(meal)}
+                  actionButton={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2 text-xs"
+                      onClick={(e) => openCustomMealEntry(meal, e)}
+                    >
+                      <RefreshCw className="w-3 h-3 mr-1" />
+                      Swap
+                    </Button>
+                  }
+                />
+              </div>
             ))}
           </div>
           <Pagination 
@@ -300,13 +366,30 @@ const Index = () => {
           </div>
           <div className="space-y-3">
             {exercises.map((exercise, index) => (
-              <ExerciseCard
-                key={exercise.id}
-                exercise={exercise}
-                onToggle={toggleExercise}
-                index={index}
-                onClick={() => openExerciseModal(exercise)}
-              />
+              <div key={exercise.id} className="relative">
+                {substitutedExercises[exercise.id] && (
+                  <div className="absolute -top-2 left-3 z-10 px-2 py-0.5 text-xs font-medium bg-accent text-accent-foreground rounded-full">
+                    Substituted: {substitutedExercises[exercise.id].name}
+                  </div>
+                )}
+                <ExerciseCard
+                  exercise={exercise}
+                  onToggle={toggleExercise}
+                  index={index}
+                  onClick={() => openExerciseModal(exercise)}
+                  actionButton={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2 text-xs"
+                      onClick={(e) => openCustomExerciseEntry(exercise, e)}
+                    >
+                      <RefreshCw className="w-3 h-3 mr-1" />
+                      Swap
+                    </Button>
+                  }
+                />
+              </div>
             ))}
           </div>
           <Pagination 
@@ -314,6 +397,16 @@ const Index = () => {
             totalPages={2} 
             onPageChange={setExercisePage}
           />
+        </section>
+
+        {/* Streak Calendar Section */}
+        <section className="slide-up" style={{ animationDelay: "300ms" }}>
+          <SectionHeader
+            title="Progress Streak"
+            subtitle="Track your consistency"
+            icon={CalendarDays}
+          />
+          <StreakCalendar />
         </section>
       </main>
 
@@ -331,6 +424,15 @@ const Index = () => {
         open={exerciseModalOpen} 
         onOpenChange={setExerciseModalOpen}
       />
+      {customEntryItem && (
+        <CustomEntryModal
+          type={customEntryType}
+          originalItem={customEntryItem}
+          open={customEntryOpen}
+          onOpenChange={setCustomEntryOpen}
+          onSubmit={handleCustomEntry}
+        />
+      )}
     </div>
   );
 };

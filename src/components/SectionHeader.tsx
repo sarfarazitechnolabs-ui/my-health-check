@@ -5,8 +5,8 @@ interface SectionHeaderProps {
   title: string;
   subtitle: string;
   icon: LucideIcon;
-  completedCount: number;
-  totalCount: number;
+  completedCount?: number;
+  totalCount?: number;
 }
 
 export const SectionHeader = ({
@@ -28,22 +28,24 @@ export const SectionHeader = ({
         </div>
       </div>
       
-      <div className="flex items-center gap-2">
-        <span
-          className={cn(
-            "text-sm font-semibold transition-colors duration-200",
-            completedCount === totalCount ? "text-primary" : "text-muted-foreground"
-          )}
-        >
-          {completedCount}/{totalCount}
-        </span>
-        <div className="w-20 h-2 rounded-full bg-progress-bg overflow-hidden">
-          <div
-            className="h-full rounded-full gradient-primary transition-all duration-500 ease-out"
-            style={{ width: `${(completedCount / totalCount) * 100}%` }}
-          />
+      {completedCount !== undefined && totalCount !== undefined && (
+        <div className="flex items-center gap-2">
+          <span
+            className={cn(
+              "text-sm font-semibold transition-colors duration-200",
+              completedCount === totalCount ? "text-primary" : "text-muted-foreground"
+            )}
+          >
+            {completedCount}/{totalCount}
+          </span>
+          <div className="w-20 h-2 rounded-full bg-progress-bg overflow-hidden">
+            <div
+              className="h-full rounded-full gradient-primary transition-all duration-500 ease-out"
+              style={{ width: `${(completedCount / totalCount) * 100}%` }}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
