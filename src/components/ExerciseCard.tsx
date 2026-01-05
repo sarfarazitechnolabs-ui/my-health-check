@@ -16,9 +16,10 @@ interface ExerciseCardProps {
   onToggle: (id: string) => void;
   index: number;
   onClick?: () => void;
+  actionButton?: React.ReactNode;
 }
 
-export const ExerciseCard = ({ exercise, onToggle, index, onClick }: ExerciseCardProps) => {
+export const ExerciseCard = ({ exercise, onToggle, index, onClick, actionButton }: ExerciseCardProps) => {
   return (
     <div
       className={cn(
@@ -65,6 +66,12 @@ export const ExerciseCard = ({ exercise, onToggle, index, onClick }: ExerciseCar
           )}
         </div>
       </div>
+      
+      {actionButton && (
+        <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
+          {actionButton}
+        </div>
+      )}
     </div>
   );
 };
