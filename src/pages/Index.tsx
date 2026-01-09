@@ -10,9 +10,10 @@ import { MealDetailModal } from "@/components/MealDetailModal";
 import { ExerciseDetailModal } from "@/components/ExerciseDetailModal";
 import { CustomEntryModal } from "@/components/CustomEntryModal";
 import { StreakCalendar } from "@/components/StreakCalendar";
+import { HealthTestsSection } from "@/components/HealthTestsSection";
 import WeightCheckInModal from "@/components/WeightCheckInModal";
 import { Button } from "@/components/ui/button";
-import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus, RefreshCw } from "lucide-react";
+import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus, RefreshCw, FlaskConical } from "lucide-react";
 
 interface Meal {
   id: string;
@@ -445,8 +446,18 @@ const Index = () => {
           />
         </section>
 
-        {/* Streak Calendar Section */}
+        {/* Health Tests Section */}
         <section className="slide-up" style={{ animationDelay: "300ms" }}>
+          <SectionHeader
+            title="Lab Results"
+            subtitle="Submit your blood tests"
+            icon={FlaskConical}
+          />
+          <HealthTestsSection />
+        </section>
+
+        {/* Streak Calendar Section */}
+        <section className="slide-up" style={{ animationDelay: "400ms" }}>
           <SectionHeader
             title="Progress Streak"
             subtitle="Track your consistency"
