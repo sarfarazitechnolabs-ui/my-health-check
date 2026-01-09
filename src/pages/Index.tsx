@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ProgressRing } from "@/components/ProgressRing";
 import { MealCard } from "@/components/MealCard";
@@ -10,6 +10,7 @@ import { MealDetailModal } from "@/components/MealDetailModal";
 import { ExerciseDetailModal } from "@/components/ExerciseDetailModal";
 import { CustomEntryModal } from "@/components/CustomEntryModal";
 import { StreakCalendar } from "@/components/StreakCalendar";
+import WeightCheckInModal from "@/components/WeightCheckInModal";
 import { Button } from "@/components/ui/button";
 import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus, RefreshCw } from "lucide-react";
 
@@ -160,6 +161,51 @@ const Index = () => {
   // Track substituted items
   const [substitutedMeals, setSubstitutedMeals] = useState<Record<string, { name: string; calories: number }>>({});
   const [substitutedExercises, setSubstitutedExercises] = useState<Record<string, { name: string }>>({});
+  
+  // Weight check-in state
+  const [weightCheckInOpen, setWeightCheckInOpen] = useState(false);
+  const [delayTimeout, setDelayTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  // Show weight check-in on page load
+  useEffect(() => {
+    const today = new Date().toDateString();
+    const lastSkipped = localStorage.getItem("weightCheckInSkipped");
+    const lastLogged = localStorage.getItem("weightCheckInLogged");
+    
+    // Don't show if already logged or skipped today
+    if (lastLogged === today || lastSkipped === today) {
+      return;
+    }
+    
+    // Show after a brief delay for better UX
+    const timer = setTimeout(() => {
+      setWeightCheckInOpen(true);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleWeightSubmit = (weight: number) => {
+    console.log("Weight logged:", weight);
+    localStorage.setItem("weightCheckInLogged", new Date().toDateString());
+    setWeightCheckInOpen(false);
+    if (delayTimeout) clearTimeout(delayTimeout);
+  };
+
+  const handleWeightSkip = () => {
+    localStorage.setItem("weightCheckInSkipped", new Date().toDateString());
+    setWeightCheckInOpen(false);
+    if (delayTimeout) clearTimeout(delayTimeout);
+  };
+
+  const handleWeightDelay = () => {
+    setWeightCheckInOpen(false);
+    // Set timeout to show again in 10 minutes
+    const timeout = setTimeout(() => {
+      setWeightCheckInOpen(true);
+    }, 10 * 60 * 1000); // 10 minutes
+    setDelayTimeout(timeout);
+  };
 
   const toggleMeal = (id: string) => {
     setMeals((prev) =>
@@ -433,6 +479,13 @@ const Index = () => {
           onSubmit={handleCustomEntry}
         />
       )}
+      <WeightCheckInModal
+        open={weightCheckInOpen}
+        onOpenChange={setWeightCheckInOpen}
+        onSubmit={handleWeightSubmit}
+        onSkip={handleWeightSkip}
+        onDelay={handleWeightDelay}
+      />
     </div>
   );
 };
