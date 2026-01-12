@@ -9,6 +9,11 @@ import PlanCreator from "./pages/PlanCreator";
 import DietPlans from "./pages/DietPlans";
 import WorkoutPlans from "./pages/WorkoutPlans";
 import Chat from "./pages/Chat";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Report from "./pages/Report";
 import NotFound from "./pages/NotFound";
 import ChatPopup from "./components/ChatPopup";
 
@@ -27,6 +32,11 @@ const App = () => (
           <Route path="/create/diet" element={<DietPlans />} />
           <Route path="/create/workout" element={<WorkoutPlans />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/report" element={<Report />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
