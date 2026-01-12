@@ -12,7 +12,7 @@ import {
   Target,
   Heart
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -236,9 +236,49 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 border-t border-border/50">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© 2026 AI Fitness. Powered by artificial intelligence.</p>
+      <footer className="py-12 border-t border-border/50 bg-muted/20">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div className="space-y-4">
+              <Link to="/" className="flex items-center gap-2">
+                <Sparkles className="w-6 h-6 text-primary" />
+                <span className="font-bold text-xl">AI Fitness</span>
+              </Link>
+              <p className="text-sm text-muted-foreground">
+                Your AI-powered personal fitness coach for achieving real results.
+              </p>
+            </div>
+            
+            <div className="space-y-4">
+              <h4 className="font-semibold">Product</h4>
+              <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                <Link to="/dashboard" className="hover:text-foreground transition-colors">Dashboard</Link>
+                <Link to="/create" className="hover:text-foreground transition-colors">Create Plan</Link>
+                <Link to="/chat" className="hover:text-foreground transition-colors">AI Chat</Link>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <h4 className="font-semibold">Company</h4>
+              <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                <Link to="/about" className="hover:text-foreground transition-colors">About Us</Link>
+                <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
+                <Link to="/report" className="hover:text-foreground transition-colors">Report Issue</Link>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <h4 className="font-semibold">Legal</h4>
+              <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                <Link to="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
+                <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+              </div>
+            </div>
+          </div>
+          
+          <div className="pt-8 border-t border-border/50 text-center text-sm text-muted-foreground">
+            <p>© 2026 AI Fitness. Powered by artificial intelligence.</p>
+          </div>
         </div>
       </footer>
     </div>
