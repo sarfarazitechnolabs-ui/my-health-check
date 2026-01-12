@@ -51,6 +51,38 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Navbar */}
+      <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-lg">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2">
+            <Sparkles className="w-6 h-6 text-primary" />
+            <span className="font-bold text-xl">AI Fitness</span>
+          </Link>
+          
+          <nav className="hidden md:flex items-center gap-6">
+            <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              About
+            </Link>
+            <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Contact
+            </Link>
+            <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Dashboard
+            </Link>
+          </nav>
+          
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="sm" className="hidden sm:inline-flex" onClick={() => navigate('/dashboard')}>
+              Sign In
+            </Button>
+            <Button size="sm" className="gap-1" onClick={() => navigate('/dashboard')}>
+              <Zap className="w-4 h-4" />
+              Get Started
+            </Button>
+          </div>
+        </div>
+      </header>
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
