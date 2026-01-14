@@ -1,3 +1,4 @@
+import { Suspense, lazy } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -10,9 +11,13 @@ import {
   CheckCircle2,
   Zap,
   Target,
-  Heart
+  Heart,
+  Star,
+  Quote
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
+
+const Hero3D = lazy(() => import("@/components/Hero3D"));
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -49,6 +54,30 @@ const Landing = () => {
     "Smart meal planning"
   ];
 
+  const reviews = [
+    {
+      name: "Sarah M.",
+      role: "Fitness Enthusiast",
+      avatar: "S",
+      rating: 5,
+      text: "This AI-powered platform completely transformed my approach to fitness. The personalized plans are incredibly accurate!"
+    },
+    {
+      name: "James K.",
+      role: "Marathon Runner",
+      avatar: "J",
+      rating: 5,
+      text: "The nutrition optimization feature helped me fuel my runs properly. Lost 15 lbs and improved my marathon time by 20 minutes."
+    },
+    {
+      name: "Emily R.",
+      role: "Busy Professional",
+      avatar: "E",
+      rating: 5,
+      text: "Finally a fitness app that adapts to my schedule. The AI understands when I'm busy and adjusts my workouts accordingly."
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
@@ -83,14 +112,25 @@ const Landing = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
+      {/* Hero Section with 3D */}
+      <section className="relative overflow-hidden min-h-[80vh] flex items-center">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         
+        {/* 3D Element */}
+        <div className="absolute right-0 top-0 w-1/2 h-full hidden lg:block">
+          <Suspense fallback={
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+            </div>
+          }>
+            <Hero3D />
+          </Suspense>
+        </div>
+        
         <div className="relative container mx-auto px-4 py-20 lg:py-32">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
+          <div className="max-w-2xl space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium">
               <Sparkles className="w-4 h-4" />
               <span>AI-Powered Fitness Revolution</span>
@@ -103,12 +143,12 @@ const Landing = () => {
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl leading-relaxed">
               Your personal AI fitness coach that creates custom workout plans, 
               optimizes your nutrition, and tracks your progress — all powered by cutting-edge AI.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Button 
                 size="lg" 
                 className="text-lg px-8 py-6 gap-2 group"
@@ -237,6 +277,53 @@ const Landing = () => {
                 </CardContent>
               </Card>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Reviews Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 text-primary mb-4">
+              <Star className="w-5 h-5 fill-primary" />
+              <span className="font-medium">Trusted by thousands</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              What Our Users Say
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Real results from real people who transformed their lives with AI Fitness.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {reviews.map((review, index) => (
+              <Card 
+                key={review.name}
+                className="group hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 hover:-translate-y-1 border-border/50 bg-card/50 backdrop-blur"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <CardContent className="p-6 space-y-4">
+                  <Quote className="w-8 h-8 text-primary/30" />
+                  <p className="text-muted-foreground leading-relaxed">"{review.text}"</p>
+                  <div className="flex items-center gap-1 mb-2">
+                    {[...Array(review.rating)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-3 pt-4 border-t border-border/50">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-semibold">
+                      {review.avatar}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">{review.name}</p>
+                      <p className="text-xs text-muted-foreground">{review.role}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>

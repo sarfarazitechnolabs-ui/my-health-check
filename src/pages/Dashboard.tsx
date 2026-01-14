@@ -12,6 +12,8 @@ import { CustomEntryModal } from "@/components/CustomEntryModal";
 import { StreakCalendar } from "@/components/StreakCalendar";
 import { HealthTestsSection } from "@/components/HealthTestsSection";
 import WeightCheckInModal from "@/components/WeightCheckInModal";
+import NotificationsDropdown from "@/components/NotificationsDropdown";
+import AIMacroAnimation from "@/components/AIMacroAnimation";
 import { Button } from "@/components/ui/button";
 import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus, RefreshCw, FlaskConical } from "lucide-react";
 
@@ -311,6 +313,7 @@ const Index = () => {
                   Day 12
                 </span>
               </div>
+              <NotificationsDropdown />
               <Link to="/create">
                 <Button size="sm" className="rounded-full">
                   <Plus className="w-4 h-4 mr-1" />
@@ -323,8 +326,13 @@ const Index = () => {
       </header>
 
       <main className="container max-w-2xl py-6 space-y-8">
-        {/* Progress Overview */}
+        {/* AI Macro Animation */}
         <section className="slide-up">
+          <AIMacroAnimation />
+        </section>
+
+        {/* Progress Overview */}
+        <section className="slide-up" style={{ animationDelay: "50ms" }}>
           <div className="grid grid-cols-2 gap-4">
             {/* Meals Progress */}
             <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-card shadow-soft">

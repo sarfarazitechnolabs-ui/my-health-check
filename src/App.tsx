@@ -14,6 +14,7 @@ import Contact from "./pages/Contact";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Report from "./pages/Report";
+import VerifyOTP from "./pages/VerifyOTP";
 import NotFound from "./pages/NotFound";
 import ChatPopup from "./components/ChatPopup";
 
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/report" element={<Report />} />
+          <Route path="/verify" element={<VerifyOTP />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
