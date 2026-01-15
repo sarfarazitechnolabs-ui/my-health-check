@@ -348,6 +348,39 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Macro Targets */}
+        <section className="slide-up" style={{ animationDelay: "75ms" }}>
+          <div className="p-5 rounded-2xl bg-card shadow-soft border border-border/50">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-foreground">Macro Targets</h3>
+              <span className="text-xs text-muted-foreground">Daily goals</span>
+            </div>
+            <div className="space-y-3">
+              {[
+                { label: "Protein", current: meals.filter(m => m.completed).reduce((sum, m) => sum + m.protein, 0), target: 150, unit: "g" },
+                { label: "Carbs", current: meals.filter(m => m.completed).reduce((sum, m) => sum + m.carbs, 0), target: 200, unit: "g" },
+                { label: "Fats", current: meals.filter(m => m.completed).reduce((sum, m) => sum + m.fats, 0), target: 65, unit: "g" },
+              ].map((macro) => (
+                <div key={macro.label} className="space-y-1.5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-medium text-muted-foreground">{macro.label}</span>
+                    <span className="text-xs text-foreground">
+                      <span className="font-semibold">{macro.current}</span>
+                      <span className="text-muted-foreground">/{macro.target}{macro.unit}</span>
+                    </span>
+                  </div>
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className="h-full rounded-full bg-primary transition-all duration-300"
+                      style={{ width: `${Math.min((macro.current / macro.target) * 100, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Meals Section */}
         <section className="slide-up" style={{ animationDelay: "100ms" }}>
           <SectionHeader
