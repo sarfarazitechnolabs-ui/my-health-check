@@ -13,7 +13,7 @@ import { StreakCalendar } from "@/components/StreakCalendar";
 import { HealthTestsSection } from "@/components/HealthTestsSection";
 import WeightCheckInModal from "@/components/WeightCheckInModal";
 import NotificationsDropdown from "@/components/NotificationsDropdown";
-import AIMacroAnimation from "@/components/AIMacroAnimation";
+
 import { Button } from "@/components/ui/button";
 import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus, RefreshCw, FlaskConical } from "lucide-react";
 
@@ -326,11 +326,6 @@ const Index = () => {
       </header>
 
       <main className="container max-w-2xl py-6 space-y-8">
-        {/* AI Macro Animation */}
-        <section className="slide-up">
-          <AIMacroAnimation />
-        </section>
-
         {/* Progress Overview */}
         <section className="slide-up" style={{ animationDelay: "50ms" }}>
           <div className="grid grid-cols-2 gap-4">

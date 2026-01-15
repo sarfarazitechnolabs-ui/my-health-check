@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 
-const Hero3D = lazy(() => import("@/components/Hero3D"));
+
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -118,16 +118,6 @@ const Landing = () => {
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         
-        {/* 3D Element */}
-        <div className="absolute right-0 top-0 w-1/2 h-full hidden lg:block">
-          <Suspense fallback={
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-            </div>
-          }>
-            <Hero3D />
-          </Suspense>
-        </div>
         
         <div className="relative container mx-auto px-4 py-20 lg:py-32">
           <div className="max-w-2xl space-y-8">
