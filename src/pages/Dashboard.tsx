@@ -34,10 +34,11 @@ interface Exercise {
   id: string;
   name: string;
   sets: number;
-  reps: number;
+  reps: number; // default reps if targetRepsPerSet not specified
+  targetRepsPerSet?: number[]; // different reps per set
   duration?: string;
   completed: boolean;
-  repsPerSet?: number[];
+  actualRepsPerSet?: number[];
 }
 
 const initialMeals: Meal[] = [
@@ -104,6 +105,7 @@ const initialExercises: Exercise[] = [
     name: "Barbell Squats",
     sets: 4,
     reps: 10,
+    targetRepsPerSet: [12, 10, 8, 8], // pyramid
     completed: false,
   },
   {
@@ -111,6 +113,7 @@ const initialExercises: Exercise[] = [
     name: "Romanian Deadlifts",
     sets: 3,
     reps: 12,
+    targetRepsPerSet: [12, 12, 10],
     completed: false,
   },
   {
@@ -118,13 +121,14 @@ const initialExercises: Exercise[] = [
     name: "Walking Lunges",
     sets: 3,
     reps: 20,
-    completed: false,
+    completed: false, // uniform reps
   },
   {
     id: "e4",
     name: "Leg Press",
     sets: 3,
     reps: 15,
+    targetRepsPerSet: [15, 12, 10],
     completed: false,
   },
   {
@@ -232,7 +236,7 @@ const Index = () => {
     if (exercise.completed) {
       setExercises((prev) =>
         prev.map((ex) =>
-          ex.id === id ? { ...ex, completed: false, repsPerSet: undefined } : ex
+          ex.id === id ? { ...ex, completed: false, actualRepsPerSet: undefined } : ex
         )
       );
     } else {
@@ -242,10 +246,10 @@ const Index = () => {
     }
   };
   
-  const handleExerciseCompletion = (id: string, repsPerSet: number[]) => {
+  const handleExerciseCompletion = (id: string, actualRepsPerSet: number[]) => {
     setExercises((prev) =>
       prev.map((ex) =>
-        ex.id === id ? { ...ex, completed: true, repsPerSet } : ex
+        ex.id === id ? { ...ex, completed: true, actualRepsPerSet } : ex
       )
     );
     setExerciseToComplete(null);

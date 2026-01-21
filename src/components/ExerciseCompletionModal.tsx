@@ -18,8 +18,9 @@ interface ExerciseCompletionModalProps {
     name: string;
     sets: number;
     reps: number;
+    targetRepsPerSet?: number[];
   } | null;
-  onConfirm: (id: string, repsPerSet: number[]) => void;
+  onConfirm: (id: string, actualRepsPerSet: number[]) => void;
 }
 
 export const ExerciseCompletionModal = ({
@@ -28,38 +29,49 @@ export const ExerciseCompletionModal = ({
   exercise,
   onConfirm,
 }: ExerciseCompletionModalProps) => {
-  const [repsPerSet, setRepsPerSet] = useState<number[]>([]);
+  const [actualRepsPerSet, setActualRepsPerSet] = useState<number[]>([]);
+
+  // Get target reps for each set
+  const getTargetReps = (setIndex: number): number => {
+    if (!exercise) return 0;
+    return exercise.targetRepsPerSet?.[setIndex] ?? exercise.reps;
+  };
 
   // Initialize reps array when exercise changes
   useEffect(() => {
     if (exercise && open) {
-      setRepsPerSet(Array(exercise.sets).fill(exercise.reps));
+      const initialReps = Array(exercise.sets)
+        .fill(0)
+        .map((_, i) => getTargetReps(i));
+      setActualRepsPerSet(initialReps);
     }
   }, [exercise, open]);
 
   const handleConfirm = () => {
     if (exercise) {
-      onConfirm(exercise.id, repsPerSet);
+      onConfirm(exercise.id, actualRepsPerSet);
       onClose();
     }
   };
 
   const adjustReps = (setIndex: number, delta: number) => {
-    setRepsPerSet(prev => 
+    setActualRepsPerSet(prev => 
       prev.map((reps, i) => i === setIndex ? Math.max(0, reps + delta) : reps)
     );
   };
 
   const updateReps = (setIndex: number, value: number) => {
-    setRepsPerSet(prev => 
+    setActualRepsPerSet(prev => 
       prev.map((reps, i) => i === setIndex ? Math.max(0, value) : reps)
     );
   };
 
   if (!exercise) return null;
 
-  const totalTargetReps = exercise.sets * exercise.reps;
-  const totalActualReps = repsPerSet.reduce((sum, r) => sum + r, 0);
+  const totalTargetReps = exercise.targetRepsPerSet 
+    ? exercise.targetRepsPerSet.reduce((sum, r) => sum + r, 0)
+    : exercise.sets * exercise.reps;
+  const totalActualReps = actualRepsPerSet.reduce((sum, r) => sum + r, 0);
   const isComplete = totalActualReps >= totalTargetReps;
 
   return (
@@ -76,24 +88,18 @@ export const ExerciseCompletionModal = ({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Target info */}
-          <div className="p-3 rounded-lg bg-muted/50 text-center">
-            <p className="text-sm text-muted-foreground">Target</p>
-            <p className="text-lg font-semibold text-foreground">
-              {exercise.sets} sets × {exercise.reps} reps each
-            </p>
-          </div>
-
           {/* Per-set reps inputs */}
           <div className="space-y-3">
-            {repsPerSet.map((reps, index) => {
-              const isShort = reps < exercise.reps;
-              const isOver = reps > exercise.reps;
+            {actualRepsPerSet.map((actual, index) => {
+              const target = getTargetReps(index);
+              const isShort = actual < target;
+              const isOver = actual > target;
               
               return (
                 <div key={index} className="flex items-center gap-3">
-                  <div className="w-16 text-sm font-medium text-muted-foreground">
-                    Set {index + 1}
+                  <div className="w-20 shrink-0">
+                    <div className="text-sm font-medium text-foreground">Set {index + 1}</div>
+                    <div className="text-xs text-muted-foreground">Target: {target}</div>
                   </div>
                   <div className="flex items-center gap-2 flex-1">
                     <Button
@@ -107,7 +113,7 @@ export const ExerciseCompletionModal = ({
                     </Button>
                     <Input
                       type="number"
-                      value={reps}
+                      value={actual}
                       onChange={(e) => updateReps(index, parseInt(e.target.value) || 0)}
                       className="text-center text-sm font-semibold h-8"
                     />
@@ -121,12 +127,12 @@ export const ExerciseCompletionModal = ({
                       <Plus className="w-3 h-3" />
                     </Button>
                   </div>
-                  <div className="w-16 text-right">
+                  <div className="w-12 text-right shrink-0">
                     {isShort && (
-                      <span className="text-xs text-amber-600">-{exercise.reps - reps}</span>
+                      <span className="text-xs text-amber-600 font-medium">-{target - actual}</span>
                     )}
                     {isOver && (
-                      <span className="text-xs text-primary">+{reps - exercise.reps}</span>
+                      <span className="text-xs text-primary font-medium">+{actual - target}</span>
                     )}
                     {!isShort && !isOver && (
                       <span className="text-xs text-primary">✓</span>

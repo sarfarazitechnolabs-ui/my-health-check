@@ -7,9 +7,10 @@ interface Exercise {
   name: string;
   sets: number;
   reps: number;
+  targetRepsPerSet?: number[];
   duration?: string;
   completed: boolean;
-  repsPerSet?: number[];
+  actualRepsPerSet?: number[];
 }
 
 interface ExerciseCardProps {
@@ -57,19 +58,28 @@ export const ExerciseCard = ({ exercise, onToggle, index, onClick, actionButton 
         <div className="flex items-center gap-4 mt-1.5">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Repeat className="w-3.5 h-3.5" />
-            {exercise.completed && exercise.repsPerSet ? (
-              <span className="flex items-center gap-1">
-                {exercise.repsPerSet.map((reps, i) => (
-                  <span key={i} className="flex items-center">
-                    <span className={reps < exercise.reps ? "text-amber-600" : "text-primary"}>
-                      {reps}
+            {exercise.completed && exercise.actualRepsPerSet ? (
+              // Show actual vs target for each set
+              <span className="flex items-center gap-1 flex-wrap">
+                {exercise.actualRepsPerSet.map((actual, i) => {
+                  const target = exercise.targetRepsPerSet?.[i] ?? exercise.reps;
+                  const isShort = actual < target;
+                  return (
+                    <span key={i} className="flex items-center">
+                      <span className={isShort ? "text-amber-600" : "text-primary"}>
+                        {actual}
+                      </span>
+                      <span className="text-muted-foreground">/{target}</span>
+                      {i < exercise.actualRepsPerSet!.length - 1 && <span className="mx-0.5">·</span>}
                     </span>
-                    {i < exercise.repsPerSet!.length - 1 && <span className="mx-0.5">·</span>}
-                  </span>
-                ))}
-                <span className="text-muted-foreground ml-1">/ {exercise.reps} each</span>
+                  );
+                })}
               </span>
+            ) : exercise.targetRepsPerSet ? (
+              // Show different target reps per set
+              <span>{exercise.sets} sets: {exercise.targetRepsPerSet.join(", ")} reps</span>
             ) : (
+              // Uniform reps
               <span>{exercise.sets} sets × {exercise.reps} reps</span>
             )}
           </div>
