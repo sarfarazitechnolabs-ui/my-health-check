@@ -9,8 +9,7 @@ interface Exercise {
   reps: number;
   duration?: string;
   completed: boolean;
-  actualSets?: number;
-  actualReps?: number;
+  repsPerSet?: number[];
 }
 
 interface ExerciseCardProps {
@@ -58,16 +57,17 @@ export const ExerciseCard = ({ exercise, onToggle, index, onClick, actionButton 
         <div className="flex items-center gap-4 mt-1.5">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Repeat className="w-3.5 h-3.5" />
-            {exercise.completed && exercise.actualSets !== undefined && exercise.actualReps !== undefined ? (
-              <span>
-                <span className={exercise.actualSets < exercise.sets ? "text-amber-600" : "text-primary"}>
-                  {exercise.actualSets}
-                </span>
-                /{exercise.sets} sets × {" "}
-                <span className={exercise.actualReps < exercise.reps ? "text-amber-600" : "text-primary"}>
-                  {exercise.actualReps}
-                </span>
-                /{exercise.reps} reps
+            {exercise.completed && exercise.repsPerSet ? (
+              <span className="flex items-center gap-1">
+                {exercise.repsPerSet.map((reps, i) => (
+                  <span key={i} className="flex items-center">
+                    <span className={reps < exercise.reps ? "text-amber-600" : "text-primary"}>
+                      {reps}
+                    </span>
+                    {i < exercise.repsPerSet!.length - 1 && <span className="mx-0.5">·</span>}
+                  </span>
+                ))}
+                <span className="text-muted-foreground ml-1">/ {exercise.reps} each</span>
               </span>
             ) : (
               <span>{exercise.sets} sets × {exercise.reps} reps</span>
