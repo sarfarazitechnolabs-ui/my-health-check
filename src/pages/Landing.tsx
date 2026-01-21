@@ -120,7 +120,7 @@ const Landing = () => {
         
         
         <div className="relative container mx-auto px-4 py-20 lg:py-32">
-          <div className="max-w-2xl space-y-8">
+          <div className="max-w-3xl mx-auto text-center space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium">
               <Sparkles className="w-4 h-4" />
               <span>AI-Powered Fitness Revolution</span>
@@ -133,12 +133,12 @@ const Landing = () => {
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl leading-relaxed">
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Your personal AI fitness coach that creates custom workout plans, 
               optimizes your nutrition, and tracks your progress — all powered by cutting-edge AI.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center">
               <Button 
                 size="lg" 
                 className="text-lg px-8 py-6 gap-2 group"

@@ -13,6 +13,7 @@ import { StreakCalendar } from "@/components/StreakCalendar";
 import { HealthTestsSection } from "@/components/HealthTestsSection";
 import WeightCheckInModal from "@/components/WeightCheckInModal";
 import NotificationsDropdown from "@/components/NotificationsDropdown";
+import { ExerciseCompletionModal } from "@/components/ExerciseCompletionModal";
 
 import { Button } from "@/components/ui/button";
 import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus, RefreshCw, FlaskConical } from "lucide-react";
@@ -36,6 +37,8 @@ interface Exercise {
   reps: number;
   duration?: string;
   completed: boolean;
+  actualSets?: number;
+  actualReps?: number;
 }
 
 const initialMeals: Meal[] = [
@@ -165,6 +168,10 @@ const Index = () => {
   const [substitutedMeals, setSubstitutedMeals] = useState<Record<string, { name: string; calories: number }>>({});
   const [substitutedExercises, setSubstitutedExercises] = useState<Record<string, { name: string }>>({});
   
+  // Exercise completion modal state
+  const [exerciseToComplete, setExerciseToComplete] = useState<Exercise | null>(null);
+  const [exerciseCompletionOpen, setExerciseCompletionOpen] = useState(false);
+  
   // Weight check-in state
   const [weightCheckInOpen, setWeightCheckInOpen] = useState(false);
   const [delayTimeout, setDelayTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -219,11 +226,30 @@ const Index = () => {
   };
 
   const toggleExercise = (id: string) => {
+    const exercise = exercises.find(ex => ex.id === id);
+    if (!exercise) return;
+    
+    // If unchecking, just toggle it off
+    if (exercise.completed) {
+      setExercises((prev) =>
+        prev.map((ex) =>
+          ex.id === id ? { ...ex, completed: false, actualSets: undefined, actualReps: undefined } : ex
+        )
+      );
+    } else {
+      // If checking, open the completion modal
+      setExerciseToComplete(exercise);
+      setExerciseCompletionOpen(true);
+    }
+  };
+  
+  const handleExerciseCompletion = (id: string, actualSets: number, actualReps: number) => {
     setExercises((prev) =>
       prev.map((ex) =>
-        ex.id === id ? { ...ex, completed: !ex.completed } : ex
+        ex.id === id ? { ...ex, completed: true, actualSets, actualReps } : ex
       )
     );
+    setExerciseToComplete(null);
   };
 
   const openMealModal = (meal: Meal) => {
@@ -532,6 +558,15 @@ const Index = () => {
         onSubmit={handleWeightSubmit}
         onSkip={handleWeightSkip}
         onDelay={handleWeightDelay}
+      />
+      <ExerciseCompletionModal
+        open={exerciseCompletionOpen}
+        onClose={() => {
+          setExerciseCompletionOpen(false);
+          setExerciseToComplete(null);
+        }}
+        exercise={exerciseToComplete}
+        onConfirm={handleExerciseCompletion}
       />
     </div>
   );

@@ -9,6 +9,8 @@ interface Exercise {
   reps: number;
   duration?: string;
   completed: boolean;
+  actualSets?: number;
+  actualReps?: number;
 }
 
 interface ExerciseCardProps {
@@ -56,7 +58,20 @@ export const ExerciseCard = ({ exercise, onToggle, index, onClick, actionButton 
         <div className="flex items-center gap-4 mt-1.5">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Repeat className="w-3.5 h-3.5" />
-            <span>{exercise.sets} sets × {exercise.reps} reps</span>
+            {exercise.completed && exercise.actualSets !== undefined && exercise.actualReps !== undefined ? (
+              <span>
+                <span className={exercise.actualSets < exercise.sets ? "text-amber-600" : "text-primary"}>
+                  {exercise.actualSets}
+                </span>
+                /{exercise.sets} sets × {" "}
+                <span className={exercise.actualReps < exercise.reps ? "text-amber-600" : "text-primary"}>
+                  {exercise.actualReps}
+                </span>
+                /{exercise.reps} reps
+              </span>
+            ) : (
+              <span>{exercise.sets} sets × {exercise.reps} reps</span>
+            )}
           </div>
           {exercise.duration && (
             <div className="flex items-center gap-1.5 text-xs text-primary font-medium">
