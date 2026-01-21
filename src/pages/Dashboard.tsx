@@ -37,8 +37,7 @@ interface Exercise {
   reps: number;
   duration?: string;
   completed: boolean;
-  actualSets?: number;
-  actualReps?: number;
+  repsPerSet?: number[];
 }
 
 const initialMeals: Meal[] = [
@@ -233,7 +232,7 @@ const Index = () => {
     if (exercise.completed) {
       setExercises((prev) =>
         prev.map((ex) =>
-          ex.id === id ? { ...ex, completed: false, actualSets: undefined, actualReps: undefined } : ex
+          ex.id === id ? { ...ex, completed: false, repsPerSet: undefined } : ex
         )
       );
     } else {
@@ -243,10 +242,10 @@ const Index = () => {
     }
   };
   
-  const handleExerciseCompletion = (id: string, actualSets: number, actualReps: number) => {
+  const handleExerciseCompletion = (id: string, repsPerSet: number[]) => {
     setExercises((prev) =>
       prev.map((ex) =>
-        ex.id === id ? { ...ex, completed: true, actualSets, actualReps } : ex
+        ex.id === id ? { ...ex, completed: true, repsPerSet } : ex
       )
     );
     setExerciseToComplete(null);
