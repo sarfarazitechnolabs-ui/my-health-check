@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import PlanCreator from "./pages/PlanCreator";
 import DietPlans from "./pages/DietPlans";
 import WorkoutPlans from "./pages/WorkoutPlans";
+import WorkoutPlanBuilder from "./pages/WorkoutPlanBuilder";
 import Chat from "./pages/Chat";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/create" element={<PlanCreator />} />
           <Route path="/create/diet" element={<DietPlans />} />
           <Route path="/create/workout" element={<WorkoutPlans />} />
+          <Route path="/create/workout/new" element={<WorkoutPlanBuilder />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />

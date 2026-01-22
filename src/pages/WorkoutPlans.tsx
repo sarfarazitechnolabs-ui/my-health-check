@@ -8,7 +8,8 @@ import {
   ChevronDown,
   ChevronUp,
   Timer,
-  Repeat
+  Repeat,
+  Utensils
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +17,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-
 interface Exercise {
   id: string;
   name: string;
@@ -184,10 +184,20 @@ const WorkoutPlans = () => {
                 </p>
               </div>
             </div>
-            <Button onClick={() => setShowNewPlanForm(true)} className="rounded-full">
-              <Plus className="w-4 h-4 mr-1" />
-              New Plan
-            </Button>
+            <div className="flex items-center gap-2">
+              <Link to="/create/diet">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Utensils className="w-4 h-4" />
+                  Diet
+                </Button>
+              </Link>
+              <Link to="/create/workout/new">
+                <Button className="rounded-full">
+                  <Plus className="w-4 h-4 mr-1" />
+                  New Plan
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </header>
