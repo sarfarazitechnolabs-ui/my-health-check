@@ -8,7 +8,8 @@ import {
   Clock,
   Flame,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Dumbbell
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -179,10 +180,18 @@ const DietPlans = () => {
                 </p>
               </div>
             </div>
-            <Button onClick={() => setShowNewPlanForm(true)} className="rounded-full">
-              <Plus className="w-4 h-4 mr-1" />
-              New Plan
-            </Button>
+            <div className="flex items-center gap-2">
+              <Link to="/create/workout/new">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Dumbbell className="w-4 h-4" />
+                  Workout
+                </Button>
+              </Link>
+              <Button onClick={() => setShowNewPlanForm(true)} className="rounded-full">
+                <Plus className="w-4 h-4 mr-1" />
+                New Plan
+              </Button>
+            </div>
           </div>
         </div>
       </header>
