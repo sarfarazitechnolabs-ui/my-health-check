@@ -9,6 +9,7 @@ import {
   Trash2,
   ChevronDown,
   ChevronUp,
+  ChevronRight,
   Search,
   User,
   Calendar,
@@ -110,7 +111,50 @@ interface Client {
   avatar: string;
 }
 
-type Step = "client" | "days" | "exercises";
+interface SavedPlan {
+  id: string;
+  clientId: string;
+  name: string;
+  days: DayConfig[];
+  createdAt: string;
+}
+
+// Mock saved plans per client
+const mockSavedPlans: SavedPlan[] = [
+  {
+    id: "sp1",
+    clientId: "c1",
+    name: "4-Day Push/Pull/Legs",
+    days: [
+      { dayId: "monday", dayLabel: "Monday", dayName: "Push Day", exercises: [
+        { id: "ex1", name: "Bench Press", sets: [{ id: "s1", minReps: 8, maxReps: 12 }], weight: 80 }
+      ], isOpen: false },
+      { dayId: "wednesday", dayLabel: "Wednesday", dayName: "Pull Day", exercises: [], isOpen: false },
+    ],
+    createdAt: "2024-01-15"
+  },
+  {
+    id: "sp2",
+    clientId: "c1",
+    name: "Full Body 3x Week",
+    days: [
+      { dayId: "monday", dayLabel: "Monday", dayName: "Full Body A", exercises: [], isOpen: false },
+    ],
+    createdAt: "2024-01-20"
+  },
+  {
+    id: "sp3",
+    clientId: "c2",
+    name: "Upper/Lower Split",
+    days: [
+      { dayId: "tuesday", dayLabel: "Tuesday", dayName: "Upper", exercises: [], isOpen: false },
+      { dayId: "thursday", dayLabel: "Thursday", dayName: "Lower", exercises: [], isOpen: false },
+    ],
+    createdAt: "2024-01-18"
+  },
+];
+
+type Step = "client" | "plans" | "days" | "exercises";
 
 const WorkoutPlanBuilder = () => {
   const { toast } = useToast();
@@ -279,7 +323,12 @@ const WorkoutPlanBuilder = () => {
     navigate("/create/workout");
   };
 
-  const stepNumber = currentStep === "client" ? 1 : currentStep === "days" ? 2 : 3;
+  const stepNumber = currentStep === "client" ? 1 : currentStep === "plans" ? 2 : currentStep === "days" ? 3 : 4;
+  const totalSteps = 4;
+
+  const clientPlans = selectedClient 
+    ? mockSavedPlans.filter(p => p.clientId === selectedClient.id)
+    : [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -298,7 +347,7 @@ const WorkoutPlanBuilder = () => {
                   Create Workout Plan
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  Step {stepNumber} of 3
+                  Step {stepNumber} of {totalSteps}
                 </p>
               </div>
             </div>
@@ -312,7 +361,7 @@ const WorkoutPlanBuilder = () => {
 
           {/* Progress bar */}
           <div className="flex gap-2 mt-4">
-            {["client", "days", "exercises"].map((step, idx) => (
+            {["client", "plans", "days", "exercises"].map((step, idx) => (
               <div
                 key={step}
                 className={`h-1 flex-1 rounded-full transition-colors ${
@@ -374,14 +423,98 @@ const WorkoutPlanBuilder = () => {
             <Button
               className="w-full mt-4"
               disabled={!selectedClient}
-              onClick={() => setCurrentStep("days")}
+              onClick={() => setCurrentStep("plans")}
             >
               Continue <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
         )}
 
-        {/* Step 2: Days Configuration */}
+        {/* Step 2: Client Plans */}
+        {currentStep === "plans" && (
+          <div className="space-y-4 slide-up">
+            <div className="p-4 rounded-xl bg-card flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold">
+                {selectedClient?.avatar}
+              </div>
+              <div>
+                <p className="font-medium text-foreground">{selectedClient?.name}</p>
+                <p className="text-xs text-muted-foreground">{selectedClient?.email}</p>
+              </div>
+            </div>
+
+            {clientPlans.length > 0 ? (
+              <>
+                <div className="text-center">
+                  <Dumbbell className="w-10 h-10 text-primary mx-auto mb-2" />
+                  <h2 className="text-lg font-semibold">Existing Plans</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedClient?.name} has {clientPlans.length} workout plan{clientPlans.length !== 1 ? "s" : ""}
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  {clientPlans.map((plan) => (
+                    <div
+                      key={plan.id}
+                      className="p-4 rounded-xl bg-card border border-border"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-semibold text-foreground">{plan.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {plan.days.length} day{plan.days.length !== 1 ? "s" : ""} • Created {plan.createdAt}
+                          </p>
+                          <div className="flex flex-wrap gap-1.5 mt-2">
+                            {plan.days.map((day) => (
+                              <span
+                                key={day.dayId}
+                                className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary"
+                              >
+                                {day.dayName || day.dayLabel}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted-foreground mt-1" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="pt-4 border-t border-border">
+                  <p className="text-sm text-muted-foreground text-center mb-3">
+                    Or create a new plan
+                  </p>
+                  <Button className="w-full" onClick={() => setCurrentStep("days")}>
+                    <Plus className="w-4 h-4 mr-2" /> Create New Plan
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-8">
+                <Dumbbell className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                <h2 className="text-lg font-semibold">No Existing Plans</h2>
+                <p className="text-sm text-muted-foreground mb-6">
+                  {selectedClient?.name} doesn't have any workout plans yet
+                </p>
+                <Button onClick={() => setCurrentStep("days")}>
+                  <Plus className="w-4 h-4 mr-2" /> Create First Plan
+                </Button>
+              </div>
+            )}
+
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setCurrentStep("client")}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" /> Back to Clients
+            </Button>
+          </div>
+        )}
+
+        {/* Step 3: Days Configuration */}
         {currentStep === "days" && (
           <div className="space-y-6 slide-up">
             <div className="text-center mb-6">
@@ -436,7 +569,7 @@ const WorkoutPlanBuilder = () => {
             </div>
 
             <div className="flex gap-2 pt-4">
-              <Button variant="outline" onClick={() => setCurrentStep("client")}>
+              <Button variant="outline" onClick={() => setCurrentStep("plans")}>
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back
               </Button>
               <Button className="flex-1" onClick={proceedToExercises}>
