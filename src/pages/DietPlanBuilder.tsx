@@ -485,7 +485,7 @@ const DietPlanBuilder = () => {
 
         {/* Step 3: Day Selection */}
         {currentStep === "days" && (
-          <div className="space-y-4 slide-up">
+          <div className="space-y-6 slide-up">
             <div className="text-center mb-6">
               <Utensils className="w-12 h-12 text-primary mx-auto mb-3" />
               <h2 className="text-lg font-semibold">Configure Plan</h2>
@@ -494,10 +494,21 @@ const DietPlanBuilder = () => {
               </p>
             </div>
 
+            <div className="p-4 rounded-xl bg-card">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold">
+                  {selectedClient?.avatar}
+                </div>
+                <div>
+                  <p className="font-medium text-foreground">{selectedClient?.name}</p>
+                  <p className="text-xs text-muted-foreground">{selectedClient?.email}</p>
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="plan-name">Plan Name *</Label>
+              <Label>Plan Name *</Label>
               <Input
-                id="plan-name"
                 placeholder="e.g., Muscle Building Diet"
                 value={planName}
                 onChange={(e) => setPlanName(e.target.value)}
@@ -505,33 +516,32 @@ const DietPlanBuilder = () => {
             </div>
 
             <div className="space-y-3">
-              <Label>Select Days</Label>
-              <div className="grid grid-cols-2 gap-2">
+              <Label>Meal Days *</Label>
+              <div className="grid grid-cols-7 gap-2">
                 {daysOfWeek.map((day) => (
                   <button
                     key={day.id}
                     onClick={() => toggleDay(day.id)}
-                    className={`p-3 rounded-xl flex items-center gap-3 transition-all ${
+                    className={`p-3 rounded-xl text-center transition-all ${
                       selectedDays.includes(day.id)
-                        ? "bg-primary/10 border-2 border-primary"
-                        : "bg-card border-2 border-transparent hover:border-border"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-card hover:bg-muted"
                     }`}
                   >
-                    <Checkbox
-                      checked={selectedDays.includes(day.id)}
-                      className="pointer-events-none"
-                    />
-                    <span className="font-medium text-foreground text-sm">{day.label}</span>
+                    <span className="text-xs font-medium">{day.short}</span>
                   </button>
                 ))}
               </div>
+              <p className="text-xs text-muted-foreground">
+                {selectedDays.length} day{selectedDays.length !== 1 ? "s" : ""} selected
+              </p>
             </div>
 
-            <div className="flex gap-2 mt-6">
-              <Button variant="outline" onClick={() => setCurrentStep("plans")} className="flex-1">
+            <div className="flex gap-2 pt-4">
+              <Button variant="outline" onClick={() => setCurrentStep("plans")}>
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back
               </Button>
-              <Button onClick={proceedToMeals} className="flex-1">
+              <Button className="flex-1" onClick={proceedToMeals}>
                 Continue <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
