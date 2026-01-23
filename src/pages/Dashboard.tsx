@@ -343,10 +343,16 @@ const Index = () => {
                 </span>
               </div>
               <NotificationsDropdown />
-              <Link to="/create">
-                <Button size="sm" className="rounded-full">
-                  <Plus className="w-4 h-4 mr-1" />
-                  Create
+              <Link to="/create/diet/new">
+                <Button size="sm" variant="outline" className="rounded-full">
+                  <Utensils className="w-4 h-4 mr-1" />
+                  Diet
+                </Button>
+              </Link>
+              <Link to="/create/workout/new">
+                <Button size="sm" variant="outline" className="rounded-full">
+                  <Dumbbell className="w-4 h-4 mr-1" />
+                  Workout
                 </Button>
               </Link>
             </div>
