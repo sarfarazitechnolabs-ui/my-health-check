@@ -187,10 +187,12 @@ const DietPlans = () => {
                   Workout
                 </Button>
               </Link>
-              <Button onClick={() => setShowNewPlanForm(true)} className="rounded-full">
-                <Plus className="w-4 h-4 mr-1" />
-                New Plan
-              </Button>
+              <Link to="/create/diet/new">
+                <Button className="rounded-full">
+                  <Plus className="w-4 h-4 mr-1" />
+                  New Plan
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
