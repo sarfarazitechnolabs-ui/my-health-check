@@ -14,6 +14,7 @@ import {
   User,
   Calendar,
   Utensils,
+  Pencil,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -174,6 +175,9 @@ const WorkoutPlanBuilder = () => {
   // Step 3: Exercise configuration per day
   const [dayConfigs, setDayConfigs] = useState<DayConfig[]>([]);
 
+  // Edit mode state
+  const [editingPlanId, setEditingPlanId] = useState<string | null>(null);
+
   // Exercise form state
   const [activeDayId, setActiveDayId] = useState<string | null>(null);
   const [exerciseSearch, setExerciseSearch] = useState("");
@@ -184,6 +188,18 @@ const WorkoutPlanBuilder = () => {
   ]);
   const [newExerciseWeight, setNewExerciseWeight] = useState("");
   const [newExerciseRest, setNewExerciseRest] = useState("");
+
+  const loadPlanForEditing = (plan: SavedPlan) => {
+    setEditingPlanId(plan.id);
+    setPlanName(plan.name);
+    setSelectedDays(plan.days.map((d) => d.dayId));
+    setDayConfigs(plan.days.map((d) => ({ ...d, isOpen: false })));
+    if (plan.days.length > 0) {
+      setDayConfigs((prev) => prev.map((d, i) => (i === 0 ? { ...d, isOpen: true } : d)));
+    }
+    setCurrentStep("exercises");
+    toast({ title: "Editing plan", description: `Now editing "${plan.name}"` });
+  };
 
   const filteredClients = mockClients.filter(
     (c) =>
@@ -344,7 +360,7 @@ const WorkoutPlanBuilder = () => {
               </Link>
               <div>
                 <h1 className="text-xl font-display font-bold text-foreground">
-                  Create Workout Plan
+                  {editingPlanId ? "Edit Workout Plan" : "Create Workout Plan"}
                 </h1>
                 <p className="text-sm text-muted-foreground">
                   Step {stepNumber} of {totalSteps}
@@ -455,9 +471,10 @@ const WorkoutPlanBuilder = () => {
 
                 <div className="space-y-3">
                   {clientPlans.map((plan) => (
-                    <div
+                    <button
                       key={plan.id}
-                      className="p-4 rounded-xl bg-card border border-border"
+                      onClick={() => loadPlanForEditing(plan)}
+                      className="w-full p-4 rounded-xl bg-card border border-border hover:border-primary hover:bg-primary/5 transition-all text-left group"
                     >
                       <div className="flex items-start justify-between">
                         <div>
@@ -476,9 +493,11 @@ const WorkoutPlanBuilder = () => {
                             ))}
                           </div>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground mt-1" />
+                        <div className="flex items-center gap-2">
+                          <Pencil className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                        </div>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
 
@@ -878,7 +897,7 @@ const WorkoutPlanBuilder = () => {
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back
               </Button>
               <Button className="flex-1" onClick={savePlan}>
-                <Check className="w-4 h-4 mr-2" /> Save Plan
+                <Check className="w-4 h-4 mr-2" /> {editingPlanId ? "Update Plan" : "Save Plan"}
               </Button>
             </div>
           </div>

@@ -16,6 +16,7 @@ import {
   Flame,
   Copy,
   Dumbbell,
+  Pencil,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -137,6 +138,9 @@ const DietPlanBuilder = () => {
   // Step 3: Meal configuration per day
   const [dayConfigs, setDayConfigs] = useState<DayConfig[]>([]);
 
+  // Edit mode state
+  const [editingPlanId, setEditingPlanId] = useState<string | null>(null);
+
   // Meal form state
   const [activeDayId, setActiveDayId] = useState<string | null>(null);
   const [mealForm, setMealForm] = useState({
@@ -148,6 +152,18 @@ const DietPlanBuilder = () => {
     carbs: "",
     fats: "",
   });
+
+  const loadPlanForEditing = (plan: SavedPlan) => {
+    setEditingPlanId(plan.id);
+    setPlanName(plan.name);
+    setSelectedDays(plan.days.map((d) => d.dayId));
+    setDayConfigs(plan.days.map((d) => ({ ...d, isOpen: false })));
+    if (plan.days.length > 0) {
+      setDayConfigs((prev) => prev.map((d, i) => (i === 0 ? { ...d, isOpen: true } : d)));
+    }
+    setCurrentStep("meals");
+    toast({ title: "Editing plan", description: `Now editing "${plan.name}"` });
+  };
 
   const filteredClients = mockClients.filter(
     (c) =>
@@ -317,7 +333,7 @@ const DietPlanBuilder = () => {
               </Link>
               <div>
                 <h1 className="text-xl font-display font-bold text-foreground">
-                  Create Diet Plan
+                  {editingPlanId ? "Edit Diet Plan" : "Create Diet Plan"}
                 </h1>
                 <p className="text-sm text-muted-foreground">
                   Step {stepNumber} of {totalSteps}
@@ -428,9 +444,10 @@ const DietPlanBuilder = () => {
 
                 <div className="space-y-3">
                   {clientPlans.map((plan) => (
-                    <div
+                    <button
                       key={plan.id}
-                      className="p-4 rounded-xl bg-card border border-border"
+                      onClick={() => loadPlanForEditing(plan)}
+                      className="w-full p-4 rounded-xl bg-card border border-border hover:border-primary hover:bg-primary/5 transition-all text-left group"
                     >
                       <div className="flex items-start justify-between">
                         <div>
@@ -449,9 +466,11 @@ const DietPlanBuilder = () => {
                             ))}
                           </div>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground mt-1" />
+                        <div className="flex items-center gap-2">
+                          <Pencil className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                        </div>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
 
@@ -777,7 +796,7 @@ const DietPlanBuilder = () => {
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back
               </Button>
               <Button onClick={savePlan} className="flex-1">
-                <Check className="w-4 h-4 mr-2" /> Save Plan
+                <Check className="w-4 h-4 mr-2" /> {editingPlanId ? "Update Plan" : "Save Plan"}
               </Button>
             </div>
           </div>
