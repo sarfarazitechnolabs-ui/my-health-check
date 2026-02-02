@@ -1,6 +1,6 @@
-import { } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import AIMealLookup from "@/components/AIMealLookup";
 import { 
   Brain, 
   Dumbbell, 
@@ -162,7 +162,45 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* AI Meal Lookup Demo Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium">
+                <Sparkles className="w-4 h-4" />
+                <span>Instant AI Analysis</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold">
+                Get Macros for Any Meal{" "}
+                <span className="text-primary">Instantly</span>
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Simply type any meal and our AI will instantly analyze its nutritional content. 
+                Get accurate protein, carbs, fats, and calorie information in seconds.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                  <span className="text-foreground">Instant macro breakdown</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                  <span className="text-foreground">AI-powered nutritional insights</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                  <span className="text-foreground">Perfect for meal planning</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="flex justify-center">
+              <AIMealLookup />
+            </div>
+          </div>
+        </div>
+      </section>
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
