@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import AIMealLookup from "@/components/AIMealLookup";
+import DietPlanDemo from "@/components/DietPlanDemo";
 import { 
   Brain, 
   Dumbbell, 
@@ -162,41 +162,49 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* AI Meal Lookup Demo Section */}
+      {/* Diet Plan Builder Demo Section */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium">
-                <Sparkles className="w-4 h-4" />
-                <span>Instant AI Analysis</span>
+            <div className="space-y-6 order-2 lg:order-1">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium">
+                <Utensils className="w-4 h-4" />
+                <span>Smart Meal Planning</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold">
-                Get Macros for Any Meal{" "}
-                <span className="text-primary">Instantly</span>
+                Create Personalized Diet Plans{" "}
+                <span className="text-primary">in Seconds</span>
               </h2>
               <p className="text-lg text-muted-foreground">
-                Simply type any meal and our AI will instantly analyze its nutritional content. 
-                Get accurate protein, carbs, fats, and calorie information in seconds.
+                Watch how easy it is to build complete diet plans with automatic macro tracking. 
+                Select clients, schedule meals, and let AI calculate everything.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">Instant macro breakdown</span>
+                  <span className="text-foreground">Auto-calculated daily macros</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">AI-powered nutritional insights</span>
+                  <span className="text-foreground">Flexible day scheduling</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">Perfect for meal planning</span>
+                  <span className="text-foreground">Client-specific meal plans</span>
                 </li>
               </ul>
+              <Button 
+                size="lg" 
+                className="gap-2"
+                onClick={() => window.location.href = '/create/diet/new'}
+              >
+                Try It Yourself
+                <ArrowRight className="w-4 h-4" />
+              </Button>
             </div>
             
-            <div className="flex justify-center">
-              <AIMealLookup />
+            <div className="flex justify-center order-1 lg:order-2">
+              <DietPlanDemo />
             </div>
           </div>
         </div>
