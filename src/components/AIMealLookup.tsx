@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { Search, Sparkles, Loader2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect, useCallback } from "react";
+import { Search, Sparkles, Loader2, RotateCcw, Flame, Beef, Wheat, Droplets } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -10,195 +9,308 @@ interface MacroResult {
   protein: number;
   carbs: number;
   fats: number;
-  fiber: number;
+  servingSize: string;
 }
 
-const mealDatabase: Record<string, MacroResult> = {
-  "grilled chicken": { name: "Grilled Chicken Breast", calories: 165, protein: 31, carbs: 0, fats: 3.6, fiber: 0 },
-  "chicken": { name: "Grilled Chicken Breast", calories: 165, protein: 31, carbs: 0, fats: 3.6, fiber: 0 },
-  "salmon": { name: "Atlantic Salmon", calories: 208, protein: 20, carbs: 0, fats: 13, fiber: 0 },
-  "rice": { name: "White Rice (1 cup)", calories: 206, protein: 4.3, carbs: 45, fats: 0.4, fiber: 0.6 },
-  "brown rice": { name: "Brown Rice (1 cup)", calories: 216, protein: 5, carbs: 45, fats: 1.8, fiber: 3.5 },
-  "eggs": { name: "Whole Eggs (2)", calories: 156, protein: 13, carbs: 1.1, fats: 11, fiber: 0 },
-  "oatmeal": { name: "Oatmeal (1 cup)", calories: 158, protein: 6, carbs: 27, fats: 3.2, fiber: 4 },
-  "banana": { name: "Banana (medium)", calories: 105, protein: 1.3, carbs: 27, fats: 0.4, fiber: 3.1 },
-  "avocado": { name: "Avocado (half)", calories: 161, protein: 2, carbs: 8.5, fats: 15, fiber: 6.7 },
-  "steak": { name: "Beef Steak (6oz)", calories: 276, protein: 36, carbs: 0, fats: 14, fiber: 0 },
-  "pasta": { name: "Pasta (1 cup cooked)", calories: 220, protein: 8, carbs: 43, fats: 1.3, fiber: 2.5 },
-  "pizza": { name: "Pizza Slice (cheese)", calories: 285, protein: 12, carbs: 36, fats: 10, fiber: 2.5 },
-  "salad": { name: "Garden Salad", calories: 35, protein: 2.5, carbs: 7, fats: 0.4, fiber: 2.5 },
-  "burger": { name: "Beef Burger", calories: 354, protein: 20, carbs: 29, fats: 17, fiber: 1.3 },
-  "greek yogurt": { name: "Greek Yogurt (1 cup)", calories: 146, protein: 20, carbs: 8, fats: 4, fiber: 0 },
-  "yogurt": { name: "Greek Yogurt (1 cup)", calories: 146, protein: 20, carbs: 8, fats: 4, fiber: 0 },
-};
+const demoMeals: { query: string; result: MacroResult }[] = [
+  {
+    query: "Grilled Salmon Fillet",
+    result: { name: "Grilled Salmon Fillet", calories: 367, protein: 34, carbs: 0, fats: 22, servingSize: "6 oz (170g)" }
+  },
+  {
+    query: "Greek Yogurt Bowl",
+    result: { name: "Greek Yogurt Bowl", calories: 246, protein: 20, carbs: 28, fats: 8, servingSize: "1 cup (245g)" }
+  },
+  {
+    query: "Quinoa Power Bowl",
+    result: { name: "Quinoa Power Bowl", calories: 428, protein: 18, carbs: 52, fats: 16, servingSize: "1 bowl (350g)" }
+  },
+];
+
+type AnimationPhase = "idle" | "typing" | "analyzing" | "results";
 
 const AIMealLookup = () => {
-  const [query, setQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<MacroResult | null>(null);
-  const [notFound, setNotFound] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
+  const [phase, setPhase] = useState<AnimationPhase>("idle");
+  const [displayedText, setDisplayedText] = useState("");
+  const [currentMealIndex, setCurrentMealIndex] = useState(0);
+  const [animatedMacros, setAnimatedMacros] = useState({ protein: 0, carbs: 0, fats: 0, calories: 0 });
 
-  const handleSearch = async () => {
-    if (!query.trim()) return;
-    
-    setIsLoading(true);
-    setResult(null);
-    setNotFound(false);
-    setHasSearched(true);
+  const currentMeal = demoMeals[currentMealIndex];
 
-    // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 1200));
+  const animateMacros = useCallback((target: MacroResult) => {
+    const duration = 600;
+    const steps = 20;
+    const stepDuration = duration / steps;
+    let step = 0;
 
-    const searchKey = query.toLowerCase().trim();
-    const foundMeal = Object.entries(mealDatabase).find(([key]) => 
-      searchKey.includes(key) || key.includes(searchKey)
-    );
+    const interval = setInterval(() => {
+      step++;
+      const progress = step / steps;
+      const easeOut = 1 - Math.pow(1 - progress, 3);
 
-    if (foundMeal) {
-      setResult(foundMeal[1]);
-    } else {
-      setNotFound(true);
-    }
-    
-    setIsLoading(false);
+      setAnimatedMacros({
+        protein: Math.round(target.protein * easeOut),
+        carbs: Math.round(target.carbs * easeOut),
+        fats: Math.round(target.fats * easeOut),
+        calories: Math.round(target.calories * easeOut),
+      });
+
+      if (step >= steps) clearInterval(interval);
+    }, stepDuration);
+  }, []);
+
+  const runAnimation = useCallback(() => {
+    const meal = demoMeals[currentMealIndex];
+    setPhase("typing");
+    setDisplayedText("");
+    setAnimatedMacros({ protein: 0, carbs: 0, fats: 0, calories: 0 });
+
+    // Typing animation
+    let charIndex = 0;
+    const typingInterval = setInterval(() => {
+      if (charIndex < meal.query.length) {
+        setDisplayedText(meal.query.slice(0, charIndex + 1));
+        charIndex++;
+      } else {
+        clearInterval(typingInterval);
+        // Small pause before analyzing
+        setTimeout(() => {
+          setPhase("analyzing");
+          // Show results after analyzing
+          setTimeout(() => {
+            setPhase("results");
+            animateMacros(meal.result);
+          }, 800);
+        }, 300);
+      }
+    }, 50);
+
+    return () => clearInterval(typingInterval);
+  }, [currentMealIndex, animateMacros]);
+
+  // Auto-start animation on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      runAnimation();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleReplay = () => {
+    const nextIndex = (currentMealIndex + 1) % demoMeals.length;
+    setCurrentMealIndex(nextIndex);
+    setPhase("idle");
+    setTimeout(() => {
+      runAnimation();
+    }, 100);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
+  // Update animation when currentMealIndex changes (for replay with new meal)
+  useEffect(() => {
+    if (phase === "idle" && currentMealIndex > 0) {
+      runAnimation();
     }
-  };
+  }, [currentMealIndex]);
 
-  const MacroBar = ({ label, value, max, color }: { label: string; value: number; max: number; color: string }) => (
-    <div className="space-y-1.5">
-      <div className="flex justify-between text-xs">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-medium text-foreground">{value}g</span>
-      </div>
-      <div className="h-2 bg-muted rounded-full overflow-hidden">
-        <div 
-          className={cn("h-full rounded-full transition-all duration-700 ease-out", color)}
-          style={{ width: `${Math.min((value / max) * 100, 100)}%` }}
-        />
+  const MacroCard = ({ 
+    icon: Icon, 
+    label, 
+    value, 
+    unit, 
+    color, 
+    bgColor 
+  }: { 
+    icon: React.ElementType; 
+    label: string; 
+    value: number; 
+    unit: string; 
+    color: string; 
+    bgColor: string;
+  }) => (
+    <div className={cn(
+      "relative overflow-hidden rounded-xl p-4 transition-all duration-500",
+      bgColor,
+      phase === "results" ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+    )}>
+      <div className="flex items-center gap-3">
+        <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center", color)}>
+          <Icon className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <p className="text-xs text-muted-foreground font-medium">{label}</p>
+          <p className="text-xl font-bold text-foreground">
+            {value}<span className="text-sm font-normal text-muted-foreground ml-0.5">{unit}</span>
+          </p>
+        </div>
       </div>
     </div>
   );
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="p-6 rounded-2xl bg-card shadow-soft border border-border/50 space-y-5">
-        {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-foreground">AI Macro Lookup</h3>
-            <p className="text-xs text-muted-foreground">Enter any meal to get instant macros</p>
-          </div>
-        </div>
-
-        {/* Search Input */}
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="e.g., grilled chicken, oatmeal..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="pl-10 bg-background border-border/50 focus:border-primary/50"
-            />
-          </div>
-          <Button 
-            onClick={handleSearch} 
-            disabled={isLoading || !query.trim()}
-            className="gap-2"
-          >
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Sparkles className="w-4 h-4" />
-            )}
-            {isLoading ? "Analyzing" : "Analyze"}
-          </Button>
-        </div>
-
-        {/* Loading State */}
-        {isLoading && (
-          <div className="space-y-4 animate-pulse">
-            <div className="flex items-center gap-2 text-sm text-primary">
-              <Sparkles className="w-4 h-4 animate-pulse" />
-              <span>AI analyzing nutritional data...</span>
-            </div>
-            <div className="space-y-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="space-y-1.5">
-                  <div className="h-3 w-20 bg-muted rounded" />
-                  <div className="h-2 bg-muted rounded-full" />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Results */}
-        {result && !isLoading && (
-          <div className="space-y-4 animate-fade-in">
-            <div className="flex items-center justify-between">
+    <div className="w-full max-w-lg mx-auto">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-card to-card/80 shadow-lg border border-border/50">
+        {/* Decorative gradient orbs */}
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-accent/20 rounded-full blur-3xl" />
+        
+        <div className="relative p-6 space-y-5">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg shadow-primary/25">
+                <Sparkles className="w-5 h-5 text-primary-foreground" />
+              </div>
               <div>
-                <h4 className="font-semibold text-foreground">{result.name}</h4>
-                <p className="text-xs text-muted-foreground">Per serving</p>
-              </div>
-              <div className="text-right">
-                <span className="text-2xl font-bold text-primary">{result.calories}</span>
-                <span className="text-sm text-muted-foreground ml-1">kcal</span>
+                <h3 className="font-semibold text-foreground">AI Nutrition Analyzer</h3>
+                <p className="text-xs text-muted-foreground">Instant macro breakdown</p>
               </div>
             </div>
+            {phase === "results" && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleReplay}
+                className="gap-1.5 text-muted-foreground hover:text-foreground"
+              >
+                <RotateCcw className="w-4 h-4" />
+                Replay
+              </Button>
+            )}
+          </div>
 
-            <div className="space-y-3">
-              <MacroBar label="Protein" value={result.protein} max={50} color="bg-primary" />
-              <MacroBar label="Carbs" value={result.carbs} max={60} color="bg-accent" />
-              <MacroBar label="Fats" value={result.fats} max={30} color="bg-destructive/70" />
-              <MacroBar label="Fiber" value={result.fiber} max={10} color="bg-secondary-foreground/50" />
+          {/* Search Input (Visual Only) */}
+          <div className="relative">
+            <div className="flex items-center gap-3 p-3.5 rounded-xl bg-background/80 border border-border/50 backdrop-blur-sm">
+              <Search className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+              <div className="flex-1 min-h-[24px]">
+                <span className="text-foreground">{displayedText}</span>
+                {(phase === "typing") && (
+                  <span className="inline-block w-0.5 h-5 bg-primary ml-0.5 animate-pulse" />
+                )}
+                {phase === "idle" && (
+                  <span className="text-muted-foreground">Enter any meal...</span>
+                )}
+              </div>
+              <Button 
+                size="sm" 
+                className={cn(
+                  "gap-1.5 transition-all duration-300 shadow-md",
+                  phase === "analyzing" && "bg-primary/80"
+                )}
+                disabled={phase === "analyzing"}
+              >
+                {phase === "analyzing" ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="hidden sm:inline">Analyzing</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    <span className="hidden sm:inline">Analyze</span>
+                  </>
+                )}
+              </Button>
             </div>
+          </div>
 
-            <div className="pt-3 border-t border-border/50">
-              <div className="flex items-start gap-2 text-xs text-muted-foreground">
-                <Sparkles className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />
-                <p>
-                  <span className="font-medium text-foreground">AI Insight:</span>{" "}
-                  {result.protein > 20 
-                    ? "Great protein source for muscle building!" 
-                    : result.carbs > 30 
-                    ? "Good energy source for workouts." 
-                    : result.fats > 10 
-                    ? "Rich in healthy fats for hormone balance."
-                    : "Light and nutritious option."}
-                </p>
+          {/* Analyzing State */}
+          {phase === "analyzing" && (
+            <div className="space-y-4 py-4">
+              <div className="flex items-center justify-center gap-3">
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+                  <Sparkles className="absolute inset-0 m-auto w-5 h-5 text-primary" />
+                </div>
+              </div>
+              <p className="text-center text-sm text-muted-foreground">
+                AI analyzing nutritional data...
+              </p>
+              <div className="grid grid-cols-4 gap-2">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-16 rounded-xl bg-muted/50 animate-pulse" style={{ animationDelay: `${i * 100}ms` }} />
+                ))}
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Not Found */}
-        {notFound && !isLoading && (
-          <div className="text-center py-4 animate-fade-in">
-            <p className="text-sm text-muted-foreground">
-              Meal not found. Try: <span className="text-primary">chicken, salmon, eggs, oatmeal, rice</span>
-            </p>
-          </div>
-        )}
+          {/* Results */}
+          {phase === "results" && (
+            <div className="space-y-4 animate-fade-in">
+              {/* Meal Info */}
+              <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20">
+                <div>
+                  <h4 className="font-semibold text-foreground">{currentMeal.result.name}</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5">{currentMeal.result.servingSize}</p>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center gap-1.5 text-accent">
+                    <Flame className="w-5 h-5" />
+                    <span className="text-2xl font-bold">{animatedMacros.calories}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">calories</p>
+                </div>
+              </div>
 
-        {/* Initial State */}
-        {!hasSearched && !isLoading && (
-          <div className="text-center py-4 text-sm text-muted-foreground">
-            <p>Try searching for common foods like:</p>
-            <p className="text-primary mt-1">chicken • salmon • rice • eggs • avocado</p>
-          </div>
-        )}
+              {/* Macro Cards */}
+              <div className="grid grid-cols-3 gap-3">
+                <MacroCard 
+                  icon={Beef} 
+                  label="Protein" 
+                  value={animatedMacros.protein} 
+                  unit="g"
+                  color="bg-primary"
+                  bgColor="bg-primary/10"
+                />
+                <MacroCard 
+                  icon={Wheat} 
+                  label="Carbs" 
+                  value={animatedMacros.carbs} 
+                  unit="g"
+                  color="bg-accent"
+                  bgColor="bg-accent/10"
+                />
+                <MacroCard 
+                  icon={Droplets} 
+                  label="Fats" 
+                  value={animatedMacros.fats} 
+                  unit="g"
+                  color="bg-destructive/80"
+                  bgColor="bg-destructive/10"
+                />
+              </div>
+
+              {/* AI Insight */}
+              <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-foreground mb-1">AI Insight</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {currentMeal.result.protein > 25 
+                        ? "Excellent protein source! Perfect for muscle recovery and growth. Pair with complex carbs for a balanced meal."
+                        : currentMeal.result.carbs > 30 
+                        ? "Great energy source for active days. The balanced macros support sustained energy levels."
+                        : "Balanced nutrition profile with healthy fats. Ideal for maintaining metabolic health."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Idle State */}
+          {phase === "idle" && (
+            <div className="py-8 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-8 h-8 text-primary" />
+              </div>
+              <p className="text-sm text-muted-foreground">Starting demo...</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
