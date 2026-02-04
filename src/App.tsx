@@ -18,6 +18,7 @@ import Privacy from "./pages/Privacy";
 import Report from "./pages/Report";
 import VerifyOTP from "./pages/VerifyOTP";
 import NotFound from "./pages/NotFound";
+import ClientPayments from "./pages/ClientPayments";
 import ChatPopup from "./components/ChatPopup";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/report" element={<Report />} />
           <Route path="/verify" element={<VerifyOTP />} />
+          <Route path="/client-payments" element={<ClientPayments />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
