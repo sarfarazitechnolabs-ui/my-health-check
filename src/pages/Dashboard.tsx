@@ -16,7 +16,7 @@ import NotificationsDropdown from "@/components/NotificationsDropdown";
 import { ExerciseCompletionModal } from "@/components/ExerciseCompletionModal";
 
 import { Button } from "@/components/ui/button";
-import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus, RefreshCw, FlaskConical } from "lucide-react";
+import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus, RefreshCw, FlaskConical, CreditCard } from "lucide-react";
 
 interface Meal {
   id: string;
@@ -343,18 +343,24 @@ const Index = () => {
                 </span>
               </div>
               <NotificationsDropdown />
-              <Link to="/create/diet/new">
-                <Button size="sm" variant="outline" className="rounded-full">
-                  <Utensils className="w-4 h-4 mr-1" />
-                  Diet
-                </Button>
-              </Link>
-              <Link to="/create/workout/new">
-                <Button size="sm" variant="outline" className="rounded-full">
-                  <Dumbbell className="w-4 h-4 mr-1" />
-                  Workout
-                </Button>
-              </Link>
+                <Link to="/create/diet/new">
+                  <Button size="sm" variant="outline" className="rounded-full">
+                    <Utensils className="w-4 h-4 mr-1" />
+                    Diet
+                  </Button>
+                </Link>
+                <Link to="/create/workout/new">
+                  <Button size="sm" variant="outline" className="rounded-full">
+                    <Dumbbell className="w-4 h-4 mr-1" />
+                    Workout
+                  </Button>
+                </Link>
+                <Link to="/client-payments">
+                  <Button size="sm" variant="outline" className="rounded-full">
+                    <CreditCard className="w-4 h-4 mr-1" />
+                    Payments
+                  </Button>
+                </Link>
             </div>
           </div>
         </div>
