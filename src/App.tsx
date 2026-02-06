@@ -19,8 +19,10 @@ import Report from "./pages/Report";
 import VerifyOTP from "./pages/VerifyOTP";
 import NotFound from "./pages/NotFound";
 import ClientPayments from "./pages/ClientPayments";
- import ClientPaymentDetail from "./pages/ClientPaymentDetail";
- import MyPayments from "./pages/MyPayments";
+import ClientPaymentDetail from "./pages/ClientPaymentDetail";
+import MyPayments from "./pages/MyPayments";
+import TrainerProfile from "./pages/TrainerProfile";
+import ProfileSettings from "./pages/ProfileSettings";
 import ChatPopup from "./components/ChatPopup";
 
 const queryClient = new QueryClient();
@@ -47,8 +49,10 @@ const App = () => (
           <Route path="/report" element={<Report />} />
           <Route path="/verify" element={<VerifyOTP />} />
           <Route path="/client-payments" element={<ClientPayments />} />
-           <Route path="/client-payments/:clientId" element={<ClientPaymentDetail />} />
-           <Route path="/my-payments" element={<MyPayments />} />
+          <Route path="/client-payments/:clientId" element={<ClientPaymentDetail />} />
+          <Route path="/my-payments" element={<MyPayments />} />
+          <Route path="/trainer/:username" element={<TrainerProfile />} />
+          <Route path="/profile/settings" element={<ProfileSettings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
