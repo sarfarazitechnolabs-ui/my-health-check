@@ -16,7 +16,7 @@ import NotificationsDropdown from "@/components/NotificationsDropdown";
 import { ExerciseCompletionModal } from "@/components/ExerciseCompletionModal";
 
 import { Button } from "@/components/ui/button";
-import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus, RefreshCw, FlaskConical, CreditCard } from "lucide-react";
+import { Utensils, Dumbbell, Sparkles, CalendarDays, Plus, RefreshCw, FlaskConical, CreditCard, UserCircle } from "lucide-react";
 
 interface Meal {
   id: string;
@@ -359,6 +359,12 @@ const Index = () => {
                   <Button size="sm" variant="outline" className="rounded-full">
                     <CreditCard className="w-4 h-4 mr-1" />
                     Payments
+                  </Button>
+                </Link>
+                <Link to="/profile/settings">
+                  <Button size="sm" variant="outline" className="rounded-full">
+                    <UserCircle className="w-4 h-4 mr-1" />
+                    Profile
                   </Button>
                 </Link>
             </div>
