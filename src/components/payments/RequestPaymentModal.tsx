@@ -9,7 +9,8 @@
  import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
  import { Calendar } from "@/components/ui/calendar";
  import { Card, CardContent } from "@/components/ui/card";
- import { CalendarIcon, Send, IndianRupee, RefreshCw, Clock } from "lucide-react";
+import { CalendarIcon, Send, IndianRupee, RefreshCw, Clock, CreditCard, Link2, ExternalLink } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
  import { format } from "date-fns";
  import { cn } from "@/lib/utils";
  
@@ -26,13 +27,14 @@
    onSend: (request: PaymentRequestData) => void;
  }
  
- export interface PaymentRequestData {
-   clientId: string;
-   amount: number;
-   isRecurring: boolean;
-   dueDate: Date;
-   description: string;
- }
+export interface PaymentRequestData {
+  clientId: string;
+  amount: number;
+  isRecurring: boolean;
+  dueDate: Date;
+  description: string;
+  paymentMethod: "stripe" | "manual";
+}
  
  export const RequestPaymentModal = ({
    open,
@@ -40,13 +42,14 @@
    clients,
    onSend,
  }: RequestPaymentModalProps) => {
-   const [formData, setFormData] = useState<PaymentRequestData>({
-     clientId: "",
-     amount: 0,
-     isRecurring: false,
-     dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-     description: "",
-   });
+  const [formData, setFormData] = useState<PaymentRequestData>({
+    clientId: "",
+    amount: 0,
+    isRecurring: false,
+    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+    description: "",
+    paymentMethod: "stripe",
+  });
  
    const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
  
@@ -56,13 +59,14 @@
      if (!formData.clientId || formData.amount <= 0) return;
      onSend(formData);
      onOpenChange(false);
-     setFormData({
-       clientId: "",
-       amount: 0,
-       isRecurring: false,
-       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-       description: "",
-     });
+      setFormData({
+        clientId: "",
+        amount: 0,
+        isRecurring: false,
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        description: "",
+        paymentMethod: "stripe",
+      });
    };
  
    return (
@@ -94,20 +98,51 @@
                  ))}
                </SelectContent>
              </Select>
-           </div>
- 
-           {/* Amount */}
-           <div className="space-y-2">
-             <Label>Amount (₹)</Label>
-             <Input
-               type="number"
-               placeholder="Enter amount"
-               value={formData.amount || ""}
-               onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
-             />
-           </div>
- 
-           {/* One-time or Recurring */}
+            </div>
+
+            {/* Payment Method */}
+            <div className="space-y-2">
+              <Label>Payment Method</Label>
+              <RadioGroup
+                value={formData.paymentMethod}
+                onValueChange={(v) => setFormData({ ...formData, paymentMethod: v as PaymentRequestData["paymentMethod"] })}
+                className="grid grid-cols-2 gap-3"
+              >
+                <Label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:border-primary/50 [&:has(:checked)]:border-primary [&:has(:checked)]:bg-primary/5">
+                  <RadioGroupItem value="stripe" className="sr-only" />
+                  <div className="p-2 rounded-lg bg-[#635BFF]/10">
+                    <CreditCard className="h-4 w-4 text-[#635BFF]" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Stripe Checkout</p>
+                    <p className="text-xs text-muted-foreground">Card, UPI, Wallets</p>
+                  </div>
+                </Label>
+                <Label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:border-primary/50 [&:has(:checked)]:border-primary [&:has(:checked)]:bg-primary/5">
+                  <RadioGroupItem value="manual" className="sr-only" />
+                  <div className="p-2 rounded-lg bg-muted">
+                    <Link2 className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Payment Link</p>
+                    <p className="text-xs text-muted-foreground">Send reminder only</p>
+                  </div>
+                </Label>
+              </RadioGroup>
+            </div>
+
+            {/* Amount */}
+            <div className="space-y-2">
+              <Label>Amount (₹)</Label>
+              <Input
+                type="number"
+                placeholder="Enter amount"
+                value={formData.amount || ""}
+                onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
+              />
+            </div>
+
+            {/* One-time or Recurring */}
            <div className="flex items-center justify-between p-3 border rounded-lg">
              <div className="flex items-center gap-3">
                <div className="p-2 rounded-lg bg-primary/10">
@@ -195,23 +230,48 @@
                        {format(formData.dueDate, "dd MMM yyyy")}
                      </span>
                    </div>
-                   <div className="flex items-center justify-between">
-                     <span className="text-sm text-muted-foreground">Type</span>
-                     <span className="text-sm">{formData.isRecurring ? "Recurring" : "One-time"}</span>
-                   </div>
-                 </div>
-               </CardContent>
-             </Card>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Type</span>
+                      <span className="text-sm">{formData.isRecurring ? "Recurring" : "One-time"}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Method</span>
+                      <span className="text-sm flex items-center gap-1">
+                        {formData.paymentMethod === "stripe" ? (
+                          <>
+                            <CreditCard className="h-3 w-3 text-[#635BFF]" />
+                            Stripe Checkout
+                          </>
+                        ) : (
+                          <>
+                            <Link2 className="h-3 w-3" />
+                            Payment Link
+                          </>
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
            )}
          </div>
  
-         <DialogFooter>
-           <Button variant="outline" onClick={() => onOpenChange(false)}>
-             Cancel
-           </Button>
-           <Button onClick={handleSend} disabled={!formData.clientId || formData.amount <= 0}>
-             <Send className="h-4 w-4 mr-1" />
-             Send Payment Request
+          <DialogFooter>
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSend} disabled={!formData.clientId || formData.amount <= 0}>
+              {formData.paymentMethod === "stripe" ? (
+                <>
+                  <ExternalLink className="h-4 w-4 mr-1" />
+                  Send Stripe Link
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4 mr-1" />
+                  Send Payment Request
+                </>
+              )}
            </Button>
          </DialogFooter>
        </DialogContent>

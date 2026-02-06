@@ -25,14 +25,15 @@
    onSave: (payment: ManualPaymentData) => void;
  }
  
- export interface ManualPaymentData {
-   clientId: string;
-   amount: number;
-   paymentMethod: "cash" | "bank" | "upi" | "other";
-   paymentDate: Date;
-   status: "paid" | "pending";
-   notes: string;
- }
+export interface ManualPaymentData {
+  clientId: string;
+  amount: number;
+  paymentMethod: "cash" | "bank" | "upi" | "card" | "other";
+  paymentDate: Date;
+  status: "paid" | "pending";
+  notes: string;
+  cardLast4?: string;
+}
  
  export const AddManualPaymentModal = ({
    open,
@@ -66,12 +67,13 @@
      });
    };
  
-   const paymentMethods = [
-     { value: "cash", label: "Cash", icon: Banknote },
-     { value: "bank", label: "Bank Transfer", icon: Building2 },
-     { value: "upi", label: "UPI", icon: Smartphone },
-     { value: "other", label: "Other", icon: CreditCard },
-   ];
+  const paymentMethods = [
+    { value: "cash", label: "Cash", icon: Banknote },
+    { value: "bank", label: "Bank Transfer", icon: Building2 },
+    { value: "upi", label: "UPI", icon: Smartphone },
+    { value: "card", label: "Card (Stripe)", icon: CreditCard },
+    { value: "other", label: "Other", icon: CreditCard },
+  ];
  
    return (
      <Dialog open={open} onOpenChange={onOpenChange}>
@@ -133,8 +135,22 @@
                    <span className="text-sm">{method.label}</span>
                  </Label>
                ))}
-             </RadioGroup>
-           </div>
+              </RadioGroup>
+            </div>
+
+            {/* Card Details (shown when card is selected) */}
+            {formData.paymentMethod === "card" && (
+              <div className="space-y-2">
+                <Label>Card Last 4 Digits (Optional)</Label>
+                <Input
+                  placeholder="e.g., 4242"
+                  maxLength={4}
+                  value={formData.cardLast4 || ""}
+                  onChange={(e) => setFormData({ ...formData, cardLast4: e.target.value.replace(/\D/g, '') })}
+                />
+                <p className="text-xs text-muted-foreground">For your records only</p>
+              </div>
+            )}
  
            {/* Payment Date */}
            <div className="space-y-2">
